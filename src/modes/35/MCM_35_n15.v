@@ -6,50 +6,27 @@
  * (see http://www.opensource.org/licenses/bsd-license.php)
  *------------------------------------------------------------------------------ */
 
-module MCM_35_n_5 (
+module MCM_35_n15 (
     X,
-    Y1,
-    Y2,
-    Y3
+    Y
 );
 
   // Port mode declarations:
-  input  signed  [7:0] X;
-  output signed  [15:0]
-    Y1,
-    Y2,
-    Y3;
-
-  wire [15:0] Y [0:2];
-
-  assign Y1 = Y[0];
-  assign Y2 = Y[1];
-  assign Y3 = Y[2];
+  input  unsigned  [7:0] X;
+  output signed  [15:0] Y;
 
   //Multipliers:
 
   wire signed [15:0]
     w1,
-    w16,
-    w15,
-    w64,
-    w49,
     w4,
-    w4_,
-    w30;
+    w4_;
 
   assign w1 = X;
-  assign w16 = w1 << 4;
-  assign w15 = w16 - w1;
-  assign w64 = w1 << 6;
-  assign w49 = w64 - w15;
   assign w4 = w1 << 2;
   assign w4_ = -1 * w4;
-  assign w30 = w15 << 1;
 
-  assign Y[0] = w4_;
-  assign Y[1] = w30;
-  assign Y[2] = w49;
+  assign Y = w4_;
 
 endmodule //multiplier_block
 

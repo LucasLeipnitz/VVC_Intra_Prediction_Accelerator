@@ -6,7 +6,7 @@
  * (see http://www.opensource.org/licenses/bsd-license.php)
  *------------------------------------------------------------------------------ */
 
-module MCM_35_n_2 (
+module MCM_35_n2 (
     X,
     Y1,
     Y2,
