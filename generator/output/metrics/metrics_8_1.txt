@@ -1,0 +1,275 @@
+##########################################################
+
+34
+Number of Blocks: 1
+Number of Replicas: 8
+Number of References: 11
+Number of Coef Counter: 19
+Mean of coefficients per references: 1.73
+##########################################################
+
+35
+Number of Blocks: 4
+Number of Replicas: 1
+Number of References: 41
+Number of Coef Counter: 119
+Mean of coefficients per references: 2.9
+##########################################################
+
+36
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 19
+Number of Coef Counter: 60
+Mean of coefficients per references: 3.16
+##########################################################
+
+37
+Number of Blocks: 4
+Number of Replicas: 1
+Number of References: 36
+Number of Coef Counter: 118
+Mean of coefficients per references: 3.28
+##########################################################
+
+38
+Number of Blocks: 1
+Number of Replicas: 1
+Number of References: 8
+Number of Coef Counter: 30
+Mean of coefficients per references: 3.75
+##########################################################
+
+39
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 15
+Number of Coef Counter: 61
+Mean of coefficients per references: 4.07
+##########################################################
+
+40
+Number of Blocks: 1
+Number of Replicas: 4
+Number of References: 7
+Number of Coef Counter: 23
+Mean of coefficients per references: 3.29
+##########################################################
+
+41
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 14
+Number of Coef Counter: 59
+Mean of coefficients per references: 4.21
+##########################################################
+
+42
+Number of Blocks: 1
+Number of Replicas: 1
+Number of References: 6
+Number of Coef Counter: 28
+Mean of coefficients per references: 4.67
+##########################################################
+
+43
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 12
+Number of Coef Counter: 56
+Mean of coefficients per references: 4.67
+##########################################################
+
+44
+Number of Blocks: 1
+Number of Replicas: 2
+Number of References: 5
+Number of Coef Counter: 24
+Mean of coefficients per references: 4.8
+##########################################################
+
+45
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 10
+Number of Coef Counter: 53
+Mean of coefficients per references: 5.3
+##########################################################
+
+46
+Number of Blocks: 1
+Number of Replicas: 1
+Number of References: 4
+Number of Coef Counter: 24
+Mean of coefficients per references: 6.0
+##########################################################
+
+47
+Number of Blocks: 4
+Number of Replicas: 1
+Number of References: 18
+Number of Coef Counter: 109
+Mean of coefficients per references: 6.06
+##########################################################
+
+48
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 8
+Number of Coef Counter: 45
+Mean of coefficients per references: 5.62
+##########################################################
+
+49
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 8
+Number of Coef Counter: 45
+Mean of coefficients per references: 5.62
+##########################################################
+
+50
+Number of Blocks: 1
+Number of Replicas: 8
+Number of References: 4
+Number of Coef Counter: 4
+Mean of coefficients per references: 1.0
+##########################################################
+
+51
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 9
+Number of Coef Counter: 47
+Mean of coefficients per references: 5.22
+##########################################################
+
+52
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 9
+Number of Coef Counter: 46
+Mean of coefficients per references: 5.11
+##########################################################
+
+53
+Number of Blocks: 4
+Number of Replicas: 1
+Number of References: 19
+Number of Coef Counter: 109
+Mean of coefficients per references: 5.74
+##########################################################
+
+54
+Number of Blocks: 1
+Number of Replicas: 1
+Number of References: 5
+Number of Coef Counter: 24
+Mean of coefficients per references: 4.8
+##########################################################
+
+55
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 11
+Number of Coef Counter: 53
+Mean of coefficients per references: 4.82
+##########################################################
+
+56
+Number of Blocks: 1
+Number of Replicas: 2
+Number of References: 6
+Number of Coef Counter: 24
+Mean of coefficients per references: 4.0
+##########################################################
+
+57
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 13
+Number of Coef Counter: 56
+Mean of coefficients per references: 4.31
+##########################################################
+
+58
+Number of Blocks: 1
+Number of Replicas: 1
+Number of References: 7
+Number of Coef Counter: 28
+Mean of coefficients per references: 4.0
+##########################################################
+
+59
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 15
+Number of Coef Counter: 59
+Mean of coefficients per references: 3.93
+##########################################################
+
+60
+Number of Blocks: 1
+Number of Replicas: 4
+Number of References: 8
+Number of Coef Counter: 23
+Mean of coefficients per references: 2.88
+##########################################################
+
+61
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 16
+Number of Coef Counter: 62
+Mean of coefficients per references: 3.88
+##########################################################
+
+62
+Number of Blocks: 1
+Number of Replicas: 1
+Number of References: 9
+Number of Coef Counter: 30
+Mean of coefficients per references: 3.33
+##########################################################
+
+63
+Number of Blocks: 4
+Number of Replicas: 1
+Number of References: 37
+Number of Coef Counter: 118
+Mean of coefficients per references: 3.19
+##########################################################
+
+64
+Number of Blocks: 2
+Number of Replicas: 1
+Number of References: 20
+Number of Coef Counter: 60
+Mean of coefficients per references: 3.0
+##########################################################
+
+65
+Number of Blocks: 4
+Number of Replicas: 1
+Number of References: 42
+Number of Coef Counter: 119
+Mean of coefficients per references: 2.83
+##########################################################
+
+66
+Number of Blocks: 1
+Number of Replicas: 8
+Number of References: 11
+Number of Coef Counter: 19
+Mean of coefficients per references: 1.73
+
+Number of modes with 1 block(s): 13
+Number of modes with 4 block(s): 6
+Number of modes with 2 block(s): 14
+Mean of Number of Blocks: 1.97
+Mean of Number of Replicas: 1.88
+Mean of Number of References: 14.03
+Mean of Number of Coef Counter: 53.15
+Mean of coefficients per references: 4.03
+Max coefficients in a mode: 119
+Max coefficients in a reference: 8
