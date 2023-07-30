@@ -36,7 +36,7 @@ BEGIN
 	t3 <= input_3(15) & input_3(15) & input_3(15) & input_3(15) & input_3(15 downto 0);
 	
 	sum <= t0 + t1 + t2 + t3 + 32;
-	sum_shift <= "000000" & sum(19 downto 6);
+	sum_shift <= sum(19) & sum(19) & sum(19) & sum(19) & sum(19) & sum(19) & sum(19 downto 6);
 	i1 : clip
 	PORT MAP ( input => sum_shift,  output => output );
 

@@ -15,7 +15,7 @@ module MCM_35_n6 (
 );
 
   // Port mode declarations:
-  input  signed  [7:0] X;
+  input  unsigned  [7:0] X;
   output signed  [15:0]
     Y1,
     Y2,

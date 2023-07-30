@@ -38,6 +38,7 @@ module MCM_35_n9 (
     w64,
     w63,
     w2,
+    w2_,
     w10;
 
   assign w1 = X;
@@ -46,9 +47,10 @@ module MCM_35_n9 (
   assign w64 = w1 << 6;
   assign w63 = w64 - w1;
   assign w2 = w1 << 1;
+  assign w2_ = -1 * w2;
   assign w10 = w5 << 1;
 
-  assign Y[0] = w2;
+  assign Y[0] = w2_;
   assign Y[1] = w4;
   assign Y[2] = w63;
   assign Y[3] = w10;
