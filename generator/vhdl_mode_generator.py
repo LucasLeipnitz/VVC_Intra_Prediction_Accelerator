@@ -81,89 +81,140 @@ for i in range(17,32):
     for j in range(0,4):
         fc_coefficients[i][j] = simmetry_rule(i, j)
 
-def write_mcm_component(f, mode_number, list_MCM_mode):
-    component = ""
-    for i,j in zip(list_MCM_mode.keys(), list_MCM_mode.values()):
-        component = component + "\n"
-        str_ref = str(i)
-        if(str_ref[0] == "-"):
-            str_ref = 'n' + str_ref[1:]
+def write_mcm_component(f, mode_number, list_MCM_mode, single_block_mode):
+    block_counter = 0
+    for mcm_block in list_MCM_mode:
+        block_counter += 1
+        component = ""
+        for i,j in zip(mcm_block.keys(), mcm_block.values()):
+            component = component + "\n"
+            str_ref = str(i)
+            if(str_ref[0] == "-"):
+                str_ref = 'n' + str_ref[1:]
 
-        component = component + "COMPONENT MCM_" + str(mode_number) + "_" + str_ref + "\n\tPORT (\n"
-        component_input = "\t\t\tX : in std_logic_vector ( 7 downto 0 );\n"
-        component_output = "\t\t\t"
-        if(len(j) == 1):
-            component_output = component_output + "Y : "
-        else:
-            y_n = 1
-            for y in j:
-                if(y != 0):
-                    component_output = component_output + "Y" + str(y_n) + ", "
-                    y_n += 1
+            if(single_block_mode):
+                component = component + "COMPONENT MCM_" + str(mode_number) + "_" + str_ref + "\n\tPORT (\n"
+            else:
+                component = component + "COMPONENT MCM_" + str(mode_number) + "_b" + str(block_counter) + "_" + str_ref + "\n\tPORT (\n"
+            
+            component_input = "\t\t\tX : in std_logic_vector ( 7 downto 0 );\n"
+            component_output = "\t\t\t"
+            if(len(j) == 1):
+                component_output = component_output + "Y : "
+            else:
+                y_n = 1
+                for y in j:
+                    if(y != 0):
+                        component_output = component_output + "Y" + str(y_n) + ", "
+                        y_n += 1
 
-            component_output = component_output[:-2] + " : " #removing the last ','
-        
-        component_output = component_output + "out std_logic_vector ( 15 downto 0 )\n"
-        component = component + component_input + component_output
-        component = component + "\t);\nEND COMPONENT;\n"
+                component_output = component_output[:-2] + " : " #removing the last ','
+            
+            component_output = component_output + "out std_logic_vector ( 15 downto 0 )\n"
+            component = component + component_input + component_output
+            component = component + "\t);\nEND COMPONENT;\n"
     
-    f.write(component)
+        f.write(component)
 
-def write_comportamental_body(f, mode, list_of_adders, list_MCM_mode):
+def write_comportamental_body(f, mode, list_of_adders, list_MCM_mode, single_block_mode):
     input_mapping = {}
     m = 0
     input_n = 0
     block = ""
-    for i,j in zip(list_MCM_mode.keys(), list_MCM_mode.values()):
-        block += "\n"
-        str_ref = str(i)
-        if(str_ref[0] == "-"):
-            str_ref = 'n' + str_ref[1:]
+    block_counter = 0
+    for mcm_block in list_MCM_mode:
+        block_counter += 1
+        for i,j in zip(mcm_block.keys(), mcm_block.values()):
+            block += "\n"
+            str_ref = str(i)
+            if(str_ref[0] == "-"):
+                str_ref = 'n' + str_ref[1:]
 
-        block += "\tm" + str(m) + " : " + "MCM_" + str(mode) + "_" + str_ref + "\n"
-        port = "\tPORT MAP ( X => ref(" + str(i) + "), "
-        input = ""
-        if(len(j) == 1):
-            input = "Y => input(" + str(input_n) + ") );\n"
-            input_tuple = (i,1)
-            input_mapping[input_tuple] = "input(" + str(input_n) + ")"
-            input_n += 1
-        else:
-            y_n = 1
-            for y in j:
-                if(y != 0):
-                    input += "Y" + str(y_n) + " => input(" + str(input_n) + "), "
-                    input_tuple = (i,y_n)
-                    input_mapping[input_tuple] = "input(" + str(input_n) + ")"
-                    input_n += 1
-                    y_n += 1
-
-            input = input[:-2] + " );\n" #removing the last ','
-
-        block += port + input
-        m += 1
-    
-    signal = "\t\t\ttype t_input is array (0 to " + str(input_n - 1) + ") of std_logic_vector( 15 downto 0);\n\t\t\tsignal 	input : t_input;\n"
-    f.write(signal)
-    f.write("\nBEGIN\n")
-    f.write(block)
-    e = 0
-    equation = ""
-    output_n = 0
-    for adder in list_of_adders:
-        equation += "\n\te" + str(e) + ": equation_block\n"
-        port = "\tPORT MAP ("
-        input = ""
-        for i in range(0,4):
-            input += "input_" + str(i) + " => "
-            if(adder[i][1] == 0):
-                input += "\"0000000000000000\", "
+            if(single_block_mode):
+                block += "m" + str(m) + " : " + "MCM_" + str(mode) + "_" + str_ref + "\n"
             else:
-                input += input_mapping[adder[i]] + ", "
+                block += "m" + str(m) + " : " + "MCM_" + str(mode) + "_b" + str(block_counter) + "_" + str_ref + "\n"
+
+            port = "PORT MAP ( X => ref(" + str(i) + "), "
+            input = ""
+            if(len(j) == 1):
+                input = "Y => input(" + str(input_n) + ") );\n"
+                input_tuple = (block_counter,i,1)
+                input_mapping[input_tuple] = "input(" + str(input_n) + ")"
+                input_n += 1
+            else:
+                y_n = 1
+                for y in j:
+                    if(y != 0):
+                        input += "Y" + str(y_n) + " => input(" + str(input_n) + "), "
+                        input_tuple = (block_counter,i,y_n)
+                        input_mapping[input_tuple] = "input(" + str(input_n) + ")"
+                        input_n += 1
+                        y_n += 1
+
+                input = input[:-2] + " );\n" #removing the last ','
+
+            block += port + input
+            m += 1
+    
+    type = "type t_input is array (0 to " + str(input_n - 1) + ") of std_logic_vector( 15 downto 0);\ntype t_eq_input is array (0 to 15) of eq_input;\n"
+    signal = "signal 	input : t_input;\nsignal 	eq_input : t_eq_input;\n"
+    f.write(type + signal)
+    f.write("\n\nBEGIN")
+    f.write(block)
+
+    if(single_block_mode):
+        adder_counter = 0
+        atribution = "\n"
+        for adder in list_of_adders[0]:
+            input = ""
+            for i in range(0,4):
+                input += "\neq_input(" + str(adder_counter) + ")(" + str(i) + ") <= "
+                if(adder[i][1] == 0):
+                    input += "\"0000000000000000\";"
+                else:
+                    input += input_mapping[(1,adder[i][0],adder[i][1])] + ";"
+                
+            adder_counter += 1
+            atribution += input
         
-        output = "output => output(" + str(output_n) + "));\n"
-        output_n += 1
-        e += 1
+        f.write(atribution + "\n")
+    else:
+        f.write("\nPROCESS (state) is\nBEGIN\n")
+        block_counter = 0
+        atribution = ""
+        for block_adder in list_of_adders:
+            if(block_counter == 0):
+                atribution += "\tIF "
+            else:
+                atribution += "\n\tELSIF "
+
+            atribution += "(state = '" + str(block_counter) + "') THEN"
+            block_counter += 1
+            adder_counter = 0
+            for adder in block_adder:
+                input = ""
+                for i in range(0,4):
+                    input += "\n\t\teq_input(" + str(adder_counter) + ")(" + str(i) + ") <= "
+                    if(adder[i][1] == 0):
+                        input += "\"0000000000000000\";"
+                    else:
+                        input += input_mapping[(block_counter,adder[i][0],adder[i][1])] + ";"
+                    
+                adder_counter += 1
+                atribution += input
+        atribution += "\n\tEND IF;\nEND PROCESS;"
+        f.write(atribution + "\n")
+
+    equation = ""
+    for i in range(len(list_of_adders[0])):
+        equation += "\ne" + str(i) + ": equation_block\n"
+        port = "PORT MAP ("
+        input = ""
+        for j in range(0,4):
+            input += "input_" + str(j) + " => eq_input(" + str(i) + ")(" + str(j) + "), "
+
+        output = "output => output(" + str(i) + "));\n"
         equation += port + input + output
     
     f.write(equation)
@@ -171,8 +222,20 @@ def write_comportamental_body(f, mode, list_of_adders, list_MCM_mode):
 
 def generate_mode(mode, list_of_adders, list_MCM_mode):
 
+    if(len(list_MCM_mode) > 1):
+        single_block_mode = 0
+    else:
+        single_block_mode = 1
+
+    list_of_min_ref = []
+    list_of_max_ref = []
+    for i in list_MCM_mode: list_of_min_ref.append(min(i.keys())); list_of_max_ref.append(max(i.keys()))
     mode_name = "mode_" + str(mode)
-    input = "ref : in ref_bus (" + str(min(list_MCM_mode.keys())) + " to " + str(max(list_MCM_mode.keys())) + " );\n" 
+    input = "ref : in ref_bus (" + str(min(list_of_min_ref)) + " to " + str(max(list_of_max_ref)) + " );\n" 
+
+    if(not single_block_mode):
+        input += "\t\tstate: in bit;\n"
+
     output = "output : out output_bus\n"
 
     f = open(path_modes + mode_name + ".vhd", "w")
@@ -183,12 +246,12 @@ def generate_mode(mode, list_of_adders, list_MCM_mode):
     f.write(entity)
     architecture = "\nARCHITECTURE comportamental OF " + str(mode_name) + " IS\n"
     f.write(architecture)
-    write_mcm_component(f, mode, list_MCM_mode)
+    write_mcm_component(f, mode, list_MCM_mode, single_block_mode)
     f.write("\n")
     component_equation_block = "COMPONENT equation_block\n\tPORT (\n\t\t\tinput_0, input_1, input_2, input_3 : in std_logic_vector ( 15 downto 0 );"
     component_equation_block = component_equation_block + "\n\t\t\toutput : out std_logic_vector ( 7 downto 0 )\n\t);\nEND COMPONENT;\n"
     f.write(component_equation_block + "\n")
-    write_comportamental_body(f, mode, list_of_adders, list_MCM_mode)
+    write_comportamental_body(f, mode, list_of_adders, list_MCM_mode, single_block_mode)
     f.write("\nEND comportamental;")
     f.close()
 
@@ -248,7 +311,7 @@ def generate_outputs(mode, base, angle, size, list_input):
         for y in range(y_base, size):
             iIdx = ((y+1)*angle)>>5
             iFact = ((y+1)*angle)&31
-            f.write("output_" + str(y) + " : " + str(calculate_pred_y(input,x_base,iIdx,iFact)) + "\n")
+            f.write(str(calculate_pred_y(input,x_base,iIdx,iFact)) + "\n")
         
         input_counter += 1
     
@@ -274,4 +337,38 @@ def clip1(value):
         return 0
     
     return value
+
+def assert_equals(mode):
+    f_eq = open(path_tests + "test" + "_outputs_" + str(mode) + ".txt", "r")
+    f_sim = open(path_tests + "output_results.txt", "r")
+    test_counter = 0
+    output_counter = 0
+    equal_counter = 0
+    test_passed = 0
+    first_line = 1
+    for line_eq, line_sim in zip(f_eq, f_sim):
+        if("Test" in line_eq):
+            test_counter += 1
+            if((output_counter == equal_counter) and not first_line):
+                test_passed += 1
+            
+            output_counter = 0
+            equal_counter = 0
+            first_line = 0
+        else:
+            output_counter += 1    
+            if(int(line_eq) == int(line_sim, 2)):
+                equal_counter += 1
+    
+    if(output_counter == equal_counter):
+        test_passed += 1
+
+    print("Tests passed: " + str(test_passed) + "/" + str(test_counter))
+    f_eq.close()
+    f_sim.close()
+
+
+    
+        
+
         

@@ -6,12 +6,11 @@
  * (see http://www.opensource.org/licenses/bsd-license.php)
  *------------------------------------------------------------------------------ */
 
-module MCM_35_n11 (
+module MCM_35_b1_n13 (
     X,
     Y1,
     Y2,
-    Y3,
-    Y4
+    Y3
 );
 
   // Port mode declarations:
@@ -19,47 +18,42 @@ module MCM_35_n11 (
   output signed  [15:0]
     Y1,
     Y2,
-    Y3,
-    Y4;
+    Y3;
 
-  wire [15:0] Y [0:3];
+  wire [15:0] Y [0:2];
 
   assign Y1 = Y[0];
   assign Y2 = Y[1];
   assign Y3 = Y[2];
-  assign Y4 = Y[3];
 
   //Multipliers:
 
   wire signed [15:0]
     w1,
     w4,
-    w5,
-    w40,
-    w45,
-    w10,
-    w55,
-    w2,
-    w2_,
-    w20,
-    w4_;
+    w3,
+    w8,
+    w9,
+    w11,
+    w6,
+    w6_,
+    w44,
+    w36;
 
   assign w1 = X;
   assign w4 = w1 << 2;
-  assign w5 = w1 + w4;
-  assign w40 = w5 << 3;
-  assign w45 = w5 + w40;
-  assign w10 = w5 << 1;
-  assign w55 = w45 + w10;
-  assign w2 = w1 << 1;
-  assign w2_ = -1 * w2;
-  assign w20 = w5 << 2;
-  assign w4_ = -1 * w4;
+  assign w3 = w4 - w1;
+  assign w8 = w1 << 3;
+  assign w9 = w1 + w8;
+  assign w11 = w3 + w8;
+  assign w6 = w3 << 1;
+  assign w6_ = -1 * w6;
+  assign w44 = w11 << 2;
+  assign w36 = w9 << 2;
 
-  assign Y[0] = w2_;
-  assign Y[1] = w55;
-  assign Y[2] = w20;
-  assign Y[3] = w4_;
+  assign Y[0] = w6_;
+  assign Y[1] = w44;
+  assign Y[2] = w36;
 
 endmodule //multiplier_block
 

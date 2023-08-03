@@ -6,7 +6,7 @@
  * (see http://www.opensource.org/licenses/bsd-license.php)
  *------------------------------------------------------------------------------ */
 
-module MCM_35_n9 (
+module MCM_35_b1_n10 (
     X,
     Y1,
     Y2,
@@ -33,27 +33,29 @@ module MCM_35_n9 (
 
   wire signed [15:0]
     w1,
-    w4,
-    w5,
-    w64,
-    w63,
+    w16,
+    w15,
+    w30,
+    w29,
+    w1_,
+    w58,
     w2,
-    w2_,
-    w10;
+    w2_;
 
   assign w1 = X;
-  assign w4 = w1 << 2;
-  assign w5 = w1 + w4;
-  assign w64 = w1 << 6;
-  assign w63 = w64 - w1;
+  assign w16 = w1 << 4;
+  assign w15 = w16 - w1;
+  assign w30 = w15 << 1;
+  assign w29 = w30 - w1;
+  assign w1_ = -1 * w1;
+  assign w58 = w29 << 1;
   assign w2 = w1 << 1;
   assign w2_ = -1 * w2;
-  assign w10 = w5 << 1;
 
-  assign Y[0] = w2_;
-  assign Y[1] = w4;
-  assign Y[2] = w63;
-  assign Y[3] = w10;
+  assign Y[0] = w1_;
+  assign Y[1] = w58;
+  assign Y[2] = w15;
+  assign Y[3] = w2_;
 
 endmodule //multiplier_block
 

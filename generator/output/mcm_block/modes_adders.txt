@@ -1,6 +1,30 @@
 ##########################################################
 
+34
+
+Block1
+Adder0: ref[-1]*0, ref[0]*64, ref[1]*0, ref[2]*0, 
+Adder1: ref[-2]*0, ref[-1]*64, ref[0]*0, ref[1]*0, 
+Adder2: ref[-3]*0, ref[-2]*64, ref[-1]*0, ref[0]*0, 
+Adder3: ref[-4]*0, ref[-3]*64, ref[-2]*0, ref[-1]*0, 
+Adder4: ref[-5]*0, ref[-4]*64, ref[-3]*0, ref[-2]*0, 
+Adder5: ref[-6]*0, ref[-5]*64, ref[-4]*0, ref[-3]*0, 
+Adder6: ref[-7]*0, ref[-6]*64, ref[-5]*0, ref[-4]*0, 
+Adder7: ref[-8]*0, ref[-7]*64, ref[-6]*0, ref[-5]*0, 
+Adder8: ref[-9]*0, ref[-8]*64, ref[-7]*0, ref[-6]*0, 
+Adder9: ref[-10]*0, ref[-9]*64, ref[-8]*0, ref[-7]*0, 
+Adder10: ref[-11]*0, ref[-10]*64, ref[-9]*0, ref[-8]*0, 
+Adder11: ref[-12]*0, ref[-11]*64, ref[-10]*0, ref[-9]*0, 
+Adder12: ref[-13]*0, ref[-12]*64, ref[-11]*0, ref[-10]*0, 
+Adder13: ref[-14]*0, ref[-13]*64, ref[-12]*0, ref[-11]*0, 
+Adder14: ref[-15]*0, ref[-14]*64, ref[-13]*0, ref[-12]*0, 
+Adder15: ref[-16]*0, ref[-15]*64, ref[-14]*0, ref[-13]*0, 
+
+##########################################################
+
 35
+
+Block1
 Adder0: ref[-1]*-2, ref[0]*60, ref[1]*7, ref[2]*-1, 
 Adder1: ref[-2]*-4, ref[-1]*56, ref[0]*14, ref[1]*-2, 
 Adder2: ref[-3]*-5, ref[-2]*53, ref[-1]*18, ref[0]*-2, 
@@ -17,4 +41,22 @@ Adder12: ref[-12]*-4, ref[-11]*55, ref[-10]*15, ref[-9]*-2,
 Adder13: ref[-13]*-6, ref[-12]*52, ref[-11]*20, ref[-10]*-2, 
 Adder14: ref[-14]*-5, ref[-13]*44, ref[-12]*29, ref[-11]*-4, 
 Adder15: ref[-15]*-4, ref[-14]*36, ref[-13]*36, ref[-12]*-4, 
+
+Block2
+Adder0: ref[-1]*-4, ref[0]*29, ref[1]*44, ref[2]*-5, 
+Adder1: ref[-2]*-2, ref[-1]*20, ref[0]*52, ref[1]*-6, 
+Adder2: ref[-3]*-2, ref[-2]*15, ref[-1]*55, ref[0]*-4, 
+Adder3: ref[-4]*-2, ref[-3]*10, ref[-2]*58, ref[-1]*-2, 
+Adder4: ref[-5]*0, ref[-4]*2, ref[-3]*63, ref[-2]*-1, 
+Adder5: ref[-5]*-2, ref[-4]*62, ref[-3]*4, ref[-2]*0, 
+Adder6: ref[-6]*-3, ref[-5]*57, ref[-4]*12, ref[-3]*-2, 
+Adder7: ref[-7]*-4, ref[-6]*54, ref[-5]*16, ref[-4]*-2, 
+Adder8: ref[-8]*-6, ref[-7]*49, ref[-6]*24, ref[-5]*-3, 
+Adder9: ref[-9]*-4, ref[-8]*42, ref[-7]*30, ref[-6]*-4, 
+Adder10: ref[-10]*-4, ref[-9]*33, ref[-8]*39, ref[-7]*-4, 
+Adder11: ref[-11]*-4, ref[-10]*28, ref[-9]*46, ref[-8]*-6, 
+Adder12: ref[-12]*-2, ref[-11]*18, ref[-10]*53, ref[-9]*-5, 
+Adder13: ref[-13]*-2, ref[-12]*14, ref[-11]*56, ref[-10]*-4, 
+Adder14: ref[-14]*-1, ref[-13]*7, ref[-12]*60, ref[-11]*-2, 
+Adder15: ref[-14]*0, ref[-13]*64, ref[-12]*0, ref[-11]*0, 
 

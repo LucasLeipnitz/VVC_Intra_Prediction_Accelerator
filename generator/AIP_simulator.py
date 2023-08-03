@@ -13,12 +13,14 @@ modes1 = [34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,5
 modes2 = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34]
 modes3 = [2,3,10,18,33,34,35,43,46,49,50,54]
 modes4 = [35]
+modes5 = [34,35]
 modes_positive = [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]
 modes_negative = [34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]
 angles1 = [-32,-29,-26,-23,-20,-18,-16,-14,-12,-10,-8,-6,-4,-3,-2,-1,0,1,2,3,4,6,8,10,12,14,16,18,20,23,26,29,32]
 angles2 = [32,29,26,23,20,18,16,14,12,10,8,6,4,3,2,1,0,-1,-2,-3,-4,-6,-8,-10,-12,-14,-16,-18,-20,-23,-26,-29,-32]
 angles3 = [32,29,26,23,20,18,16,14,12,10,8,6,4,3,2,1,0,-1,-2,-3,-4,-6,-8,-10,-12,-14,-16,-18,-20,-23,-26,-29,-32]
 angles4 = [-29]
+angles5 = [-32,-29]
 angles_positive = [0,1,2,3,4,6,8,10,12,14,16,18,20,23,26,29,32]
 angles_negative = [-32,-29,-26,-23,-20,-18,-16,-14,-12,-10,-8,-6,-4,-3,-2,-1,0]
 
@@ -313,8 +315,8 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
             fc.write("##########################################################\n\n" + str(mode))
             fm.write("##########################################################\n\n" + str(mode))
 
-        dict_position_MCM = {}
-        dict_coefficients_MCM = {}
+        list_of_states_position = []
+        list_of_states_coefficients = []
         block_counter = 0
         reference_counter = 0
         coef_counter = 0
@@ -325,6 +327,7 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
                     fc.write("\nBlock " + str(block_counter))
 
                 MCM_blocks = calculate_MCM_blocks(mode,i,j,height = height)
+                dict_position_MCM = {}
                 for key, block in zip(MCM_blocks.keys(),MCM_blocks.values()):
                     if(write_file):
                         fp.write("\n" + str(key) + ": ")
@@ -335,8 +338,11 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
                             fp.write(str(v) + ", ")
                             
                         dict_position_MCM[key].append(v)
+
+                list_of_states_position.append(dict_position_MCM.copy())
                 
-                MCM_blocks = map_to_coefficients(calculate_MCM_blocks(mode,i,j,height = height),fc_coefficients)
+                dict_coefficients_MCM = {}
+                MCM_blocks = map_to_coefficients(MCM_blocks,fc_coefficients)
                 for key, block in zip(MCM_blocks.keys(),MCM_blocks.values()):
                     if(write_file):
                         fc.write("\n" + str(key) + ": ")
@@ -349,14 +355,14 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
                             fc.write(str(v) + ", ")
 
                         reference_coef_counter = reference_coef_counter + 1
-                        dict_coefficients_MCM[key].append(v)
+                        dict_coefficients_MCM[key].append(v)   
 
                     if(max_coef_counter_ref < reference_coef_counter):
                             max_coef_counter_ref = reference_coef_counter
 
                     coef_counter = coef_counter  + reference_coef_counter 
                     
-
+                list_of_states_coefficients.append(dict_coefficients_MCM.copy())
                 first_half = j
                 replicas = 1
                 exit = 0
@@ -372,9 +378,10 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
                     fp.write("\n")
                     fc.write("\n")
 
-                list_position_MCM.append(dict_position_MCM.copy())
-                list_coefficients_MCM.append(dict_coefficients_MCM.copy())
                 block_counter = block_counter + 1
+
+        list_position_MCM.append(list_of_states_position.copy())
+        list_coefficients_MCM.append(list_of_states_coefficients.copy())
         
         if(max_coef_counter_mode < coef_counter):
             max_coef_counter_mode = coef_counter
@@ -451,61 +458,72 @@ def calculate_adders(modes, list_position_MCM, list_coefficients_MCM, coefficien
         fao = open(path_output_blocks + "modes_adders_outputs.txt", "w")
 
     list_of_modes_adders = [] #list of list of adders of each mode
-    for mode, dict_position_MCMs, dict_coefficients_MCMs in zip(modes, list_position_MCM, list_coefficients_MCM):
+    for mode, states_position_MCM, states_coefficients_MCMs in zip(modes, list_position_MCM, list_coefficients_MCM):
         if(write_file):
             fa.write("##########################################################\n\n" + str(mode))
             fao.write("##########################################################\n\n" + str(mode))
-
-        list_of_adders = [] #is a list of tuples (ref,k) where ref(integer) is the reference multipluing, Yk is its output and k is an integer (Y1 for first output, Y2 for second ...)
         
-        adder_n = 0
-        for i, j in zip(dict_position_MCMs.values(), dict_position_MCMs.keys()):
-            for position_value in i:
-                p, index = re.findall(r'\d+', position_value) #get p[index] from string containing and put it in two separately variables
-                if(index == '0'):
-                    if(write_file):
-                        fa.write("\nAdder" + str(adder_n) + ": ")
-                        fao.write("\nAdder" + str(adder_n) + ": ")
+        matrix_of_adders = [] #is a list of list_of_adders
+        block_counter = 0
 
-                    current_adder = []
-                    adder_n = adder_n + 1
-                    value_index = 0
-                    #search all 4 values of the filter
-                    for k in range(j, j+4):
-                        range_position_value = p + '[' + str(value_index) + ']'
-                        if(range_position_value not in coefficients):
-                            d, index = re.findall(r'\d+', range_position_value) #get p[index] from string containing and put it in two separately variables
-                            d, index = simmetry_rule(d, index) #transform in a value that exists in the coefficients by the simmetry rule
-                            value = coefficients[d + '[' + index + ']']
-                        else:
-                            value = coefficients[range_position_value]
+        for dict_position_MCMs, dict_coefficients_MCMs in zip(states_position_MCM, states_coefficients_MCMs):
+            list_of_adders = [] #is a list of tuples (ref,k) where ref(integer) is the reference multipluing, Yk is its output and k is an integer (Y1 for first output, Y2 for second ...)
+            adder_n = 0
+
+            block_counter += 1
+            if(write_file):
+                fa.write("\n\nBlock" + str(block_counter))
+                fao.write("\n\nBlock" + str(block_counter))
+
+            for i, j in zip(dict_position_MCMs.values(), dict_position_MCMs.keys()):
+                for position_value in i:
+                    p, index = re.findall(r'\d+', position_value) #get p[index] from string containing and put it in two separately variables
+                    if(index == '0'):
+                        if(write_file):
+                            fa.write("\nAdder" + str(adder_n) + ": ")
+                            fao.write("\nAdder" + str(adder_n) + ": ")
+
+                        current_adder = []
+                        adder_n = adder_n + 1
+                        value_index = 0
+                        #search all 4 values of the filter
+                        for k in range(j, j+4):
+                            range_position_value = p + '[' + str(value_index) + ']'
+                            if(range_position_value not in coefficients):
+                                d, index = re.findall(r'\d+', range_position_value) #get p[index] from string containing and put it in two separately variables
+                                d, index = simmetry_rule(d, index) #transform in a value that exists in the coefficients by the simmetry rule
+                                value = coefficients[d + '[' + index + ']']
+                            else:
+                                value = coefficients[range_position_value]
+                            
+                            if(value == 0):
+                                if(write_file):
+                                    fa.write("ref[" + str(k) + "]*0, ")
+                                    fao.write("0, ")
+
+                                current_tuple = (k,0)
+                            else:
+                                #search for the value in list_coefficients_MCM of index k
+                                coefficient_index = 1
+                                for coefficient_value in dict_coefficients_MCMs[k]:
+                                    if(coefficient_value == value):
+                                        if(write_file):
+                                            fa.write("ref[" + str(k) + "]*" + str(value) + ", ")
+                                            fao.write(str(k) + ":Y" + str(coefficient_index) + ", ")
+
+                                        current_tuple = (k,coefficient_index)
+                                    else:
+                                        if(coefficient_value != 0):
+                                            coefficient_index = coefficient_index + 1
+                            
+                            current_adder.append(current_tuple)
+                            value_index = value_index + 1
                         
-                        if(value == 0):
-                            if(write_file):
-                                fa.write("ref[" + str(k) + "]*0, ")
-                                fao.write("0, ")
-
-                            current_tuple = (k,0)
-                        else:
-                            #search for the value in list_coefficients_MCM of index k
-                            coefficient_index = 1
-                            for coefficient_value in dict_coefficients_MCMs[k]:
-                                if(coefficient_value == value):
-                                    if(write_file):
-                                        fa.write("ref[" + str(k) + "]*" + str(value) + ", ")
-                                        fao.write(str(k) + ":Y" + str(coefficient_index) + ", ")
-
-                                    current_tuple = (k,coefficient_index)
-                                else:
-                                    if(coefficient_value != 0):
-                                        coefficient_index = coefficient_index + 1
-                        
-                        current_adder.append(current_tuple)
-                        value_index = value_index + 1
+                        list_of_adders.append(current_adder.copy())
                     
-                    list_of_adders.append(current_adder.copy())
+            matrix_of_adders.append(list_of_adders.copy())
 
-        list_of_modes_adders.append(list_of_adders.copy())
+        list_of_modes_adders.append(matrix_of_adders.copy())
 
         if(write_file):
             fa.write("\n\n")
