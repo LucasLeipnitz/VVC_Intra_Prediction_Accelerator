@@ -9,7 +9,7 @@ USE work.mode_in_out.all;
 ENTITY mode_37 IS
 	PORT (
 		ref : in ref_bus (-12 to 2 );
-		state: in bit;
+		state: in std_logic;
 		output : out output_bus
 	);
 END mode_37;
@@ -387,7 +387,7 @@ BEGIN
 		eq_input(15)(1) <= input(54);
 		eq_input(15)(2) <= input(52);
 		eq_input(15)(3) <= input(48);
-	ELSIF (state = '1') THEN
+	ELSE 
 		eq_input(0)(0) <= input(56);
 		eq_input(0)(1) <= input(59);
 		eq_input(0)(2) <= input(63);

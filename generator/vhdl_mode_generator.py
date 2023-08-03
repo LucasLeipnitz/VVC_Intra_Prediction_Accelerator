@@ -186,10 +186,10 @@ def write_comportamental_body(f, mode, list_of_adders, list_MCM_mode, single_blo
         for block_adder in list_of_adders:
             if(block_counter == 0):
                 atribution += "\tIF "
+                atribution += "(state = '" + str(block_counter) + "') THEN"
             else:
-                atribution += "\n\tELSIF "
+                atribution += "\n\tELSE "
 
-            atribution += "(state = '" + str(block_counter) + "') THEN"
             block_counter += 1
             adder_counter = 0
             for adder in block_adder:
@@ -234,7 +234,7 @@ def generate_mode(mode, list_of_adders, list_MCM_mode):
     input = "ref : in ref_bus (" + str(min(list_of_min_ref)) + " to " + str(max(list_of_max_ref)) + " );\n" 
 
     if(not single_block_mode):
-        input += "\t\tstate: in bit;\n"
+        input += "\t\tstate: in std_logic;\n"
 
     output = "output : out output_bus\n"
 

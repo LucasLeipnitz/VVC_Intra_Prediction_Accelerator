@@ -270,8 +270,8 @@ END COMPONENT;
 
 type t_input is array (0 to 109) of std_logic_vector( 15 downto 0);
 type t_eq_input is array (0 to 15) of eq_input;
-signal 	input : t_input;
-signal 	eq_input : t_eq_input;
+signal input : t_input;
+signal eq_input : t_eq_input;
 
 
 BEGIN
@@ -447,7 +447,7 @@ BEGIN
 		eq_input(15)(1) <= input(54);
 		eq_input(15)(2) <= input(52);
 		eq_input(15)(3) <= input(47);
-	ElSE THEN
+	ELSE 
 		eq_input(0)(0) <= input(56);
 		eq_input(0)(1) <= input(60);
 		eq_input(0)(2) <= input(63);

@@ -8,4 +8,5 @@ USE ieee.numeric_std.all;
 package mode_in_out is
 	type ref_bus is array(integer range <>) of std_logic_vector ( 7 downto 0);
 	type output_bus is array(0 to 15) of std_logic_vector ( 7 downto 0);
+	type eq_input is array(0 to 3) of std_logic_vector ( 15 downto 0);
 end package mode_in_out;
