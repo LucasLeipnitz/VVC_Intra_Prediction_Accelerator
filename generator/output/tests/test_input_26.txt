@@ -1,0 +1,22 @@
+Test 1
+State 1
+ref_-1 : 217
+ref_0 : 212
+ref_1 : 156
+ref_2 : 253
+ref_-2 : 76
+ref_-3 : 168
+ref_-4 : 161
+ref_-5 : 196
+ref_-6 : 55
+Test 2
+State 1
+ref_-1 : 82
+ref_0 : 193
+ref_1 : 202
+ref_2 : 106
+ref_-2 : 64
+ref_-3 : 57
+ref_-4 : 28
+ref_-5 : 113
+ref_-6 : 32

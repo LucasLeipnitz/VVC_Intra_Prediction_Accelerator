@@ -8,7 +8,7 @@ USE work.mode_in_out.all;
 
 ENTITY mode_34 IS
 	PORT (
-		ref : in ref_bus (-16 to 2 );
+		ref : in ref_bus (-15 to 0 );
 		output : out output_bus
 	);
 END mode_34;
@@ -18,25 +18,11 @@ ARCHITECTURE comportamental OF mode_34 IS
 COMPONENT MCM_34_n1
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
-	);
-END COMPONENT;
-
-COMPONENT MCM_34_0
-	PORT (
-			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
-	);
-END COMPONENT;
-
-COMPONENT MCM_34_1
-	PORT (
-			X : in std_logic_vector ( 7 downto 0 );
 			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
-COMPONENT MCM_34_2
+COMPONENT MCM_34_0
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
 			Y : out std_logic_vector ( 15 downto 0 )
@@ -46,102 +32,95 @@ END COMPONENT;
 COMPONENT MCM_34_n2
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n3
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n4
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n5
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n6
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n7
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n8
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n9
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n10
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n11
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n12
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n13
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n14
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
 COMPONENT MCM_34_n15
-	PORT (
-			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
-	);
-END COMPONENT;
-
-COMPONENT MCM_34_n16
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
 			Y : out std_logic_vector ( 15 downto 0 )
@@ -155,7 +134,7 @@ COMPONENT equation_block
 	);
 END COMPONENT;
 
-type t_input is array (0 to 18) of std_logic_vector( 15 downto 0);
+type t_input is array (0 to 15) of std_logic_vector( 15 downto 0);
 type t_eq_input is array (0 to 15) of eq_input;
 signal 	input : t_input;
 signal 	eq_input : t_eq_input;
@@ -163,61 +142,52 @@ signal 	eq_input : t_eq_input;
 
 BEGIN
 m0 : MCM_34_n1
-PORT MAP ( X => ref(-1), Y1 => input(0) );
+PORT MAP ( X => ref(-1), Y => input(0) );
 
 m1 : MCM_34_0
-PORT MAP ( X => ref(0), Y1 => input(1) );
+PORT MAP ( X => ref(0), Y => input(1) );
 
-m2 : MCM_34_1
-PORT MAP ( X => ref(1), Y => input(2) );
+m2 : MCM_34_n2
+PORT MAP ( X => ref(-2), Y => input(2) );
 
-m3 : MCM_34_2
-PORT MAP ( X => ref(2), Y => input(3) );
+m3 : MCM_34_n3
+PORT MAP ( X => ref(-3), Y => input(3) );
 
-m4 : MCM_34_n2
-PORT MAP ( X => ref(-2), Y1 => input(4) );
+m4 : MCM_34_n4
+PORT MAP ( X => ref(-4), Y => input(4) );
 
-m5 : MCM_34_n3
-PORT MAP ( X => ref(-3), Y1 => input(5) );
+m5 : MCM_34_n5
+PORT MAP ( X => ref(-5), Y => input(5) );
 
-m6 : MCM_34_n4
-PORT MAP ( X => ref(-4), Y1 => input(6) );
+m6 : MCM_34_n6
+PORT MAP ( X => ref(-6), Y => input(6) );
 
-m7 : MCM_34_n5
-PORT MAP ( X => ref(-5), Y1 => input(7) );
+m7 : MCM_34_n7
+PORT MAP ( X => ref(-7), Y => input(7) );
 
-m8 : MCM_34_n6
-PORT MAP ( X => ref(-6), Y1 => input(8) );
+m8 : MCM_34_n8
+PORT MAP ( X => ref(-8), Y => input(8) );
 
-m9 : MCM_34_n7
-PORT MAP ( X => ref(-7), Y1 => input(9) );
+m9 : MCM_34_n9
+PORT MAP ( X => ref(-9), Y => input(9) );
 
-m10 : MCM_34_n8
-PORT MAP ( X => ref(-8), Y1 => input(10) );
+m10 : MCM_34_n10
+PORT MAP ( X => ref(-10), Y => input(10) );
 
-m11 : MCM_34_n9
-PORT MAP ( X => ref(-9), Y1 => input(11) );
+m11 : MCM_34_n11
+PORT MAP ( X => ref(-11), Y => input(11) );
 
-m12 : MCM_34_n10
-PORT MAP ( X => ref(-10), Y1 => input(12) );
+m12 : MCM_34_n12
+PORT MAP ( X => ref(-12), Y => input(12) );
 
-m13 : MCM_34_n11
-PORT MAP ( X => ref(-11), Y1 => input(13) );
+m13 : MCM_34_n13
+PORT MAP ( X => ref(-13), Y => input(13) );
 
-m14 : MCM_34_n12
-PORT MAP ( X => ref(-12), Y1 => input(14) );
+m14 : MCM_34_n14
+PORT MAP ( X => ref(-14), Y => input(14) );
 
-m15 : MCM_34_n13
-PORT MAP ( X => ref(-13), Y1 => input(15) );
-
-m16 : MCM_34_n14
-PORT MAP ( X => ref(-14), Y1 => input(16) );
-
-m17 : MCM_34_n15
-PORT MAP ( X => ref(-15), Y1 => input(17) );
-
-m18 : MCM_34_n16
-PORT MAP ( X => ref(-16), Y => input(18) );
+m15 : MCM_34_n15
+PORT MAP ( X => ref(-15), Y => input(15) );
 
 
 eq_input(0)(0) <= "0000000000000000";
@@ -229,59 +199,59 @@ eq_input(1)(1) <= input(0);
 eq_input(1)(2) <= "0000000000000000";
 eq_input(1)(3) <= "0000000000000000";
 eq_input(2)(0) <= "0000000000000000";
-eq_input(2)(1) <= input(4);
+eq_input(2)(1) <= input(2);
 eq_input(2)(2) <= "0000000000000000";
 eq_input(2)(3) <= "0000000000000000";
 eq_input(3)(0) <= "0000000000000000";
-eq_input(3)(1) <= input(5);
+eq_input(3)(1) <= input(3);
 eq_input(3)(2) <= "0000000000000000";
 eq_input(3)(3) <= "0000000000000000";
 eq_input(4)(0) <= "0000000000000000";
-eq_input(4)(1) <= input(6);
+eq_input(4)(1) <= input(4);
 eq_input(4)(2) <= "0000000000000000";
 eq_input(4)(3) <= "0000000000000000";
 eq_input(5)(0) <= "0000000000000000";
-eq_input(5)(1) <= input(7);
+eq_input(5)(1) <= input(5);
 eq_input(5)(2) <= "0000000000000000";
 eq_input(5)(3) <= "0000000000000000";
 eq_input(6)(0) <= "0000000000000000";
-eq_input(6)(1) <= input(8);
+eq_input(6)(1) <= input(6);
 eq_input(6)(2) <= "0000000000000000";
 eq_input(6)(3) <= "0000000000000000";
 eq_input(7)(0) <= "0000000000000000";
-eq_input(7)(1) <= input(9);
+eq_input(7)(1) <= input(7);
 eq_input(7)(2) <= "0000000000000000";
 eq_input(7)(3) <= "0000000000000000";
 eq_input(8)(0) <= "0000000000000000";
-eq_input(8)(1) <= input(10);
+eq_input(8)(1) <= input(8);
 eq_input(8)(2) <= "0000000000000000";
 eq_input(8)(3) <= "0000000000000000";
 eq_input(9)(0) <= "0000000000000000";
-eq_input(9)(1) <= input(11);
+eq_input(9)(1) <= input(9);
 eq_input(9)(2) <= "0000000000000000";
 eq_input(9)(3) <= "0000000000000000";
 eq_input(10)(0) <= "0000000000000000";
-eq_input(10)(1) <= input(12);
+eq_input(10)(1) <= input(10);
 eq_input(10)(2) <= "0000000000000000";
 eq_input(10)(3) <= "0000000000000000";
 eq_input(11)(0) <= "0000000000000000";
-eq_input(11)(1) <= input(13);
+eq_input(11)(1) <= input(11);
 eq_input(11)(2) <= "0000000000000000";
 eq_input(11)(3) <= "0000000000000000";
 eq_input(12)(0) <= "0000000000000000";
-eq_input(12)(1) <= input(14);
+eq_input(12)(1) <= input(12);
 eq_input(12)(2) <= "0000000000000000";
 eq_input(12)(3) <= "0000000000000000";
 eq_input(13)(0) <= "0000000000000000";
-eq_input(13)(1) <= input(15);
+eq_input(13)(1) <= input(13);
 eq_input(13)(2) <= "0000000000000000";
 eq_input(13)(3) <= "0000000000000000";
 eq_input(14)(0) <= "0000000000000000";
-eq_input(14)(1) <= input(16);
+eq_input(14)(1) <= input(14);
 eq_input(14)(2) <= "0000000000000000";
 eq_input(14)(3) <= "0000000000000000";
 eq_input(15)(0) <= "0000000000000000";
-eq_input(15)(1) <= input(17);
+eq_input(15)(1) <= input(15);
 eq_input(15)(2) <= "0000000000000000";
 eq_input(15)(3) <= "0000000000000000";
 

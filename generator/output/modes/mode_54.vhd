@@ -8,7 +8,7 @@ USE work.mode_in_out.all;
 
 ENTITY mode_54 IS
 	PORT (
-		ref : in ref_bus (0 to 5 );
+		ref : in ref_bus (0 to 4 );
 		output : out output_bus
 	);
 END mode_54;
@@ -50,13 +50,6 @@ COMPONENT MCM_54_4
 	);
 END COMPONENT;
 
-COMPONENT MCM_54_5
-	PORT (
-			X : in std_logic_vector ( 7 downto 0 );
-			Y : out std_logic_vector ( 15 downto 0 )
-	);
-END COMPONENT;
-
 COMPONENT equation_block
 	PORT (
 			input_0, input_1, input_2, input_3 : in std_logic_vector ( 15 downto 0 );
@@ -64,7 +57,7 @@ COMPONENT equation_block
 	);
 END COMPONENT;
 
-type t_input is array (0 to 35) of std_logic_vector( 15 downto 0);
+type t_input is array (0 to 34) of std_logic_vector( 15 downto 0);
 type t_eq_input is array (0 to 15) of eq_input;
 signal 	input : t_input;
 signal 	eq_input : t_eq_input;
@@ -85,9 +78,6 @@ PORT MAP ( X => ref(3), Y1 => input(21), Y2 => input(22), Y3 => input(23), Y4 =>
 
 m4 : MCM_54_4
 PORT MAP ( X => ref(4), Y1 => input(32), Y2 => input(33), Y3 => input(34) );
-
-m5 : MCM_54_5
-PORT MAP ( X => ref(5), Y => input(35) );
 
 
 eq_input(0)(0) <= input(0);

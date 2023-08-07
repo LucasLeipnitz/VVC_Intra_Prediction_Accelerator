@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import math as mh
 import re
@@ -6,23 +5,96 @@ from collections import defaultdict
 from transform_block import TransformBlock
 
 path = "./"
-path_output_metrics = "./output/metrics/"
-path_output_blocks = "./output/mcm_block/"
+path_output_metrics = path + "output/metrics/"
+path_output_blocks = path + "output/mcm_block/"
+path_output_states = path + "output/states/"
+path_values = path + "output/values_iidx_ifact/"
+path_samples = path + "output/samples/"
 
 modes1 = [34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]
 modes2 = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34]
-modes3 = [2,3,10,18,33,34,35,43,46,49,50,54]
+modes3 = [2,3,7,10,18,23,26,30,33,34,35,43,46,49,50,54]
 modes4 = [35]
 modes5 = [34,35]
+all_modes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]
 modes_positive = [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]
 modes_negative = [34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]
 angles1 = [-32,-29,-26,-23,-20,-18,-16,-14,-12,-10,-8,-6,-4,-3,-2,-1,0,1,2,3,4,6,8,10,12,14,16,18,20,23,26,29,32]
 angles2 = [32,29,26,23,20,18,16,14,12,10,8,6,4,3,2,1,0,-1,-2,-3,-4,-6,-8,-10,-12,-14,-16,-18,-20,-23,-26,-29,-32]
-angles3 = [32,29,26,23,20,18,16,14,12,10,8,6,4,3,2,1,0,-1,-2,-3,-4,-6,-8,-10,-12,-14,-16,-18,-20,-23,-26,-29,-32]
+angles3 = [32,29,18,12,0,-6,-12,-20,-29,-32,-29,-10,-4,-1,0,4]
 angles4 = [-29]
 angles5 = [-32,-29]
+all_angles = [32,29,26,23,20,18,16,14,12,10,8,6,4,3,2,1,0,-1,-2,-3,-4,-6,-8,-10,-12,-14,-16,-18,-20,-23,-26,-29,-32,-29,-26,-23,-20,-18,-16,-14,-12,-10,-8,-6,-4,-3,-2,-1,0,1,2,3,4,6,8,10,12,14,16,18,20,23,26,29,32]
 angles_positive = [0,1,2,3,4,6,8,10,12,14,16,18,20,23,26,29,32]
 angles_negative = [-32,-29,-26,-23,-20,-18,-16,-14,-12,-10,-8,-6,-4,-3,-2,-1,0]
+
+angles_map = {
+    2 : 32,
+    3 : 29,
+    4 : 26,
+    5 : 23,
+    6 : 20,
+    7 : 18,
+    8 : 16,
+    9 : 14,
+    10 : 12,
+    11 : 10,
+    12 : 8,
+    13 : 6,
+    14 : 4,
+    15 : 3,
+    16 : 2,
+    17 : 1,
+    18 : 0,
+    19 : -1,
+    20 : -2,
+    21 : -3,
+    22 : -4,
+    23 : -6,
+    24 : -8,
+    25 : -10,
+    26 : -12,
+    27 : -14,
+    28 : -16,
+    29 : -18,
+    30 : -20,
+    31 : -23,
+    32 : -26,
+    33 : -29,
+    34 : -32,
+    35 : -29,
+    36 : -26,
+    37 : -23,
+    38 : -20,
+    39 : -18,
+    40 : -16,
+    41 : -14,
+    42 : -12,
+    43 : -10,
+    44 : -8,
+    45 : -6,
+    46 : -4,
+    47 : -3,
+    48 : -2,
+    49 : -1,
+    50 : 0,
+    51 : 1,
+    52 : 2,
+    53 : 3,
+    54 : 4,
+    55 : 6,
+    56 : 8,
+    57 : 10,
+    58 : 12,
+    59 : 14,
+    60 : 16,
+    61 : 18,
+    62 : 20,
+    63 : 23,
+    64 : 26,
+    65 : 29,
+    66 : 32
+}
 
 fc_coefficients = {
     "0[0]" : 0, 
@@ -105,16 +177,16 @@ def calculate_iidx_ifact(modes, angles, size):
         tb = TransformBlock(size, size, i, j, 0, size*2 + 2, size*2 + 2, 0)
         tb.calculate_constants_mode()
         columns.append(i)
-        values_iidx.append(tb.array_iidx)
-        values_ifact.append(tb.array_ifact)
-       
+        values_iidx.append(tb.array_iidx.copy())
+        values_ifact.append(tb.array_ifact.copy())
+
     df = pd.DataFrame(list(zip(*values_iidx)),columns = columns)
-    df.to_excel(excel_writer = path + "values_iidx_" + str(size) + ".xlsx")
+    df.to_excel(excel_writer = path_values + "values_iidx_" + str(size) + ".xlsx")
     df = pd.DataFrame(list(zip(*values_ifact)),columns = columns)
-    df.to_excel(excel_writer = path + "values_ifact_" + str(size) + ".xlsx")
+    df.to_excel(excel_writer = path_values + "values_ifact_" + str(size) + ".xlsx")
 
 
-def calculate_samples(modes, angles, size, normalize):
+def calculate_samples(modes, angles, size, normalize = 0):
     values_ref = []
     values_id = []
     columns = []
@@ -142,9 +214,9 @@ def calculate_samples(modes, angles, size, normalize):
 
     df = pd.DataFrame(list(zip(*values_ref_array)), index= rows, columns = columns)
     if(normalize):
-        df.to_excel(excel_writer = path + "ref_" + str(size) + "_normalized" + ".xlsx")
+        df.to_excel(excel_writer = path_samples + "ref_" + str(size) + "_normalized" + ".xlsx")
     else:
-        df.to_excel(excel_writer = path + "ref_" + str(size) + ".xlsx")
+        df.to_excel(excel_writer = path_samples + "ref_" + str(size) + ".xlsx")
 
 
 def calculate_equations(modes, angles, size):
@@ -153,7 +225,7 @@ def calculate_equations(modes, angles, size):
         tb.calculate_equations_mode()
 
 
-def calculate_states(modes, angles, block_size, state_size, excel = 0):
+def calculate_states(modes, angles, block_size, state_size, write_file = 0):
     values_ifact = []
     values_iidx = []
     columns = []
@@ -210,9 +282,9 @@ def calculate_states(modes, angles, block_size, state_size, excel = 0):
     df_iidx = pd.DataFrame(list(zip(*array_states_mods_iidx)), columns = columns)
     df_ifact = pd.DataFrame(list(zip(*array_states_mods_ifact)), columns = columns)
 
-    if(excel):
-        df_iidx.to_excel(excel_writer = path + "states_iidx_" + str(block_size) + "_" + str(state_size) + ".xlsx")
-        df_ifact.to_excel(excel_writer = path + "states_ifact_" + str(block_size) + "_" + str(state_size) + ".xlsx")
+    if(write_file):
+        df_iidx.to_excel(excel_writer = path_output_states + "states_iidx_" + str(block_size) + "_" + str(state_size) + ".xlsx")
+        df_ifact.to_excel(excel_writer = path_output_states + "states_ifact_" + str(block_size) + "_" + str(state_size) + ".xlsx")
     
     return df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact
 
@@ -222,7 +294,6 @@ def calculate_MCM_blocks(mode, state_iidx, state_ifact, base = 0, height = 1, pr
     variation = 0 #variation of state_iidx[i+1] and state_iidx[i] 
     
     #Number of fases equals to the size of the block 
-    
     for n in range(height):
         downward_index = base #downward will begin from the base
         for i,j in zip(state_iidx, range(len(state_iidx))):
@@ -237,8 +308,10 @@ def calculate_MCM_blocks(mode, state_iidx, state_ifact, base = 0, height = 1, pr
                     else:
                         downward_index = base - int(i)
                 else:
-                    #TODO modes < 34
-                    pass
+                    if(mode > 18):
+                        downward_index = base - int(i)
+                    else:
+                        downward_index = base + int(i)
 
             if(downward_index not in constants_vectors):
                 constants_vectors[downward_index] = []
@@ -535,4 +608,11 @@ def calculate_adders(modes, list_position_MCM, list_coefficients_MCM, coefficien
 
     return list_of_modes_adders
 
+
+def map_modes_to_angles(modes):
+    angles = []
+    for mode in modes:
+        angles.append(angles_map[mode])
+
+    return angles
 

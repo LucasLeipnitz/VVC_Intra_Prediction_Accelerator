@@ -31,28 +31,32 @@ df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calcula
 list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(sim.modes1, array_states_mods_iidx, array_states_mods_ifact, 32, height=8)
 '''
 
-df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(sim.modes5, sim.angles5, 32, 16)
+'''test_modes = sim.modes4
+test_angles = sim.angles4
+df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(test_modes, test_angles, 32, 16)
 
-list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(sim.modes5, array_states_mods_iidx, array_states_mods_ifact, 16)
+list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(test_modes, array_states_mods_iidx, array_states_mods_ifact, 16)
 
-list_of_modes_adders = sim.calculate_adders(sim.modes5,list_position_MCM, list_coefficients_MCM, sim.fc_coefficients, write_file=1)
-#gen.generate_mode(sim.modes5[1], list_of_modes_adders[1], list_coefficients_MCM[1])
+list_of_modes_adders = sim.calculate_adders(test_modes,list_position_MCM, list_coefficients_MCM, sim.fc_coefficients, write_file=1)
+#gen.generate_mode(test_modes[1], list_of_modes_adders[1], list_coefficients_MCM[1])
 
-df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(sim.modes1, sim.angles1, 32, 16)
+df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(test_modes, test_angles, 32, 16)
 
-list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(sim.modes1, array_states_mods_iidx, array_states_mods_ifact, 16)
+list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(test_modes, array_states_mods_iidx, array_states_mods_ifact, 16)
 
-list_of_modes_adders = sim.calculate_adders(sim.modes1,list_position_MCM, list_coefficients_MCM, sim.fc_coefficients, write_file=1)
-for mode, list_of_modes_adders, list_coefficients_MCM  in zip(sim.modes1, list_of_modes_adders, list_coefficients_MCM):
-    gen.generate_mode(mode, list_of_modes_adders, list_coefficients_MCM)
+list_of_modes_adders = sim.calculate_adders(test_modes,list_position_MCM, list_coefficients_MCM, sim.fc_coefficients, write_file=1)
+for mode, angle, list_of_modes_adders, list_coefficients_MCM  in zip(test_modes, test_angles, list_of_modes_adders, list_coefficients_MCM):
+    gen.generate_mode(mode, angle, list_of_modes_adders, list_coefficients_MCM)'''
 
 #Testbench, outputs and assert_equals tests
 #min_ref = min(list_coefficients_MCM[1][0].keys())
 #max_ref = max(list_coefficients_MCM[1][0].keys())
-#list_input = gen.random_generate_input(sim.modes5[1], 0, min_ref, max_ref, 5)
-#gen.generate_mode_tb(sim.modes5[1], list_coefficients_MCM[1][0], list_input)
-#gen.generate_outputs(sim.modes5[1], (0,0), -29, 16, list_input)
+#list_input = gen.random_generate_input(test_modes[1], 0, min_ref, max_ref, 5)
+#gen.generate_mode_tb(test_modes[1], list_coefficients_MCM[1][0], list_input)
+#gen.generate_outputs(test_modes[1], (0,0), -29, 16, list_input)
 #gen.assert_equals(35)
+gen.standardize_MCM_file(34,"MCM_34_n1")
+gen.standardize_MCM_file(36,"MCM_36_n1")
 
 '''#Equation calculation tests
 input = {0: 95, 1: 52, 2: 4, 3: 146,  4: 26, 5: 50, 6: 250, 7: 178, 8: 81}

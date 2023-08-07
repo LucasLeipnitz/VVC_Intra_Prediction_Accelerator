@@ -8,35 +8,14 @@ USE work.mode_in_out.all;
 
 ENTITY mode_50 IS
 	PORT (
-		ref : in ref_bus (0 to 3 );
+		ref : in ref_bus;
 		output : out output_bus
 	);
 END mode_50;
 
 ARCHITECTURE comportamental OF mode_50 IS
 
-COMPONENT MCM_50_0
-	PORT (
-			X : in std_logic_vector ( 7 downto 0 );
-			Y : out std_logic_vector ( 15 downto 0 )
-	);
-END COMPONENT;
-
 COMPONENT MCM_50_1
-	PORT (
-			X : in std_logic_vector ( 7 downto 0 );
-			Y : out std_logic_vector ( 15 downto 0 )
-	);
-END COMPONENT;
-
-COMPONENT MCM_50_2
-	PORT (
-			X : in std_logic_vector ( 7 downto 0 );
-			Y : out std_logic_vector ( 15 downto 0 )
-	);
-END COMPONENT;
-
-COMPONENT MCM_50_3
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
 			Y : out std_logic_vector ( 15 downto 0 )
@@ -50,88 +29,79 @@ COMPONENT equation_block
 	);
 END COMPONENT;
 
-type t_input is array (0 to 3) of std_logic_vector( 15 downto 0);
+type t_input is array (0 to 0) of std_logic_vector( 15 downto 0);
 type t_eq_input is array (0 to 15) of eq_input;
 signal 	input : t_input;
 signal 	eq_input : t_eq_input;
 
 
 BEGIN
-m0 : MCM_50_0
-PORT MAP ( X => ref(0), Y => input(0) );
-
-m1 : MCM_50_1
-PORT MAP ( X => ref(1), Y => input(1) );
-
-m2 : MCM_50_2
-PORT MAP ( X => ref(2), Y => input(2) );
-
-m3 : MCM_50_3
-PORT MAP ( X => ref(3), Y => input(3) );
+m0 : MCM_50_1
+PORT MAP ( X => ref(1), Y => input(0) );
 
 
 eq_input(0)(0) <= "0000000000000000";
-eq_input(0)(1) <= input(1);
+eq_input(0)(1) <= input(0);
 eq_input(0)(2) <= "0000000000000000";
 eq_input(0)(3) <= "0000000000000000";
 eq_input(1)(0) <= "0000000000000000";
-eq_input(1)(1) <= input(1);
+eq_input(1)(1) <= input(0);
 eq_input(1)(2) <= "0000000000000000";
 eq_input(1)(3) <= "0000000000000000";
 eq_input(2)(0) <= "0000000000000000";
-eq_input(2)(1) <= input(1);
+eq_input(2)(1) <= input(0);
 eq_input(2)(2) <= "0000000000000000";
 eq_input(2)(3) <= "0000000000000000";
 eq_input(3)(0) <= "0000000000000000";
-eq_input(3)(1) <= input(1);
+eq_input(3)(1) <= input(0);
 eq_input(3)(2) <= "0000000000000000";
 eq_input(3)(3) <= "0000000000000000";
 eq_input(4)(0) <= "0000000000000000";
-eq_input(4)(1) <= input(1);
+eq_input(4)(1) <= input(0);
 eq_input(4)(2) <= "0000000000000000";
 eq_input(4)(3) <= "0000000000000000";
 eq_input(5)(0) <= "0000000000000000";
-eq_input(5)(1) <= input(1);
+eq_input(5)(1) <= input(0);
 eq_input(5)(2) <= "0000000000000000";
 eq_input(5)(3) <= "0000000000000000";
 eq_input(6)(0) <= "0000000000000000";
-eq_input(6)(1) <= input(1);
+eq_input(6)(1) <= input(0);
 eq_input(6)(2) <= "0000000000000000";
 eq_input(6)(3) <= "0000000000000000";
 eq_input(7)(0) <= "0000000000000000";
-eq_input(7)(1) <= input(1);
+eq_input(7)(1) <= input(0);
 eq_input(7)(2) <= "0000000000000000";
 eq_input(7)(3) <= "0000000000000000";
 eq_input(8)(0) <= "0000000000000000";
-eq_input(8)(1) <= input(1);
+eq_input(8)(1) <= input(0);
 eq_input(8)(2) <= "0000000000000000";
 eq_input(8)(3) <= "0000000000000000";
 eq_input(9)(0) <= "0000000000000000";
-eq_input(9)(1) <= input(1);
+eq_input(9)(1) <= input(0);
 eq_input(9)(2) <= "0000000000000000";
 eq_input(9)(3) <= "0000000000000000";
 eq_input(10)(0) <= "0000000000000000";
-eq_input(10)(1) <= input(1);
+eq_input(10)(1) <= input(0);
 eq_input(10)(2) <= "0000000000000000";
 eq_input(10)(3) <= "0000000000000000";
 eq_input(11)(0) <= "0000000000000000";
-eq_input(11)(1) <= input(1);
+eq_input(11)(1) <= input(0);
 eq_input(11)(2) <= "0000000000000000";
 eq_input(11)(3) <= "0000000000000000";
 eq_input(12)(0) <= "0000000000000000";
-eq_input(12)(1) <= input(1);
+eq_input(12)(1) <= input(0);
 eq_input(12)(2) <= "0000000000000000";
 eq_input(12)(3) <= "0000000000000000";
 eq_input(13)(0) <= "0000000000000000";
-eq_input(13)(1) <= input(1);
+eq_input(13)(1) <= input(0);
 eq_input(13)(2) <= "0000000000000000";
 eq_input(13)(3) <= "0000000000000000";
 eq_input(14)(0) <= "0000000000000000";
-eq_input(14)(1) <= input(1);
+eq_input(14)(1) <= input(0);
 eq_input(14)(2) <= "0000000000000000";
 eq_input(14)(3) <= "0000000000000000";
 eq_input(15)(0) <= "0000000000000000";
-eq_input(15)(1) <= input(1);
+eq_input(15)(1) <= input(0);
 eq_input(15)(2) <= "0000000000000000";
 eq_input(15)(3) <= "0000000000000000";
 

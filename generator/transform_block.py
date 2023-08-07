@@ -4,7 +4,8 @@ import math as mh
 import re
 from collections import defaultdict
 
-path = "C:/Users/Lucas/Desktop/Estudos/Bolsa/VVC_AIP_Simulator/"
+path = "./"
+path_equations = "output/equations/"
 
 class TransformBlock:
     '''Attributes:
@@ -138,9 +139,7 @@ class TransformBlock:
             self.calculate_reference_sample_array_greather_equal_34()
         else:
             self.calculate_reference_sample_array_less_34()
-            pass
             
-
     def calculate_constants_mode(self):
         for x in range(self.nTbW):
             iidx = ((x + 1)*self.intraPredAngle) >> 5
@@ -164,7 +163,7 @@ class TransformBlock:
             self.equations.append(current_column)
 
         df = pd.DataFrame(list(zip(*self.equations)),columns = columns)
-        excel_writer = pd.ExcelWriter(path + "equations_" + str(self.predModeIntra) + "_" + str(self.nTbW) + "x" + str(self.nTbH) + ".xlsx", engine='xlsxwriter') 
+        excel_writer = pd.ExcelWriter(path + path_equations + "equations_" + str(self.predModeIntra) + "_" + str(self.nTbW) + "x" + str(self.nTbH) + ".xlsx", engine='xlsxwriter') 
         df.to_excel(excel_writer, sheet_name='equations', index=False, na_rep='NaN')
 
         # Auto-adjust columns' width

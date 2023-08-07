@@ -1,8 +1,10 @@
 import numpy as np
 import random as rm
+import math as mh
 
 path_modes = "./output/modes/"
 path_tests = "./output/tests/"
+path_input_modes = "./input/modes/"
 
 fc_coefficients = [[0 for col in range(4)] for row in range(32)]
 fc_coefficients[0][0] = 0
@@ -87,32 +89,39 @@ def write_mcm_component(f, mode_number, list_MCM_mode, single_block_mode):
         block_counter += 1
         component = ""
         for i,j in zip(mcm_block.keys(), mcm_block.values()):
-            component = component + "\n"
-            str_ref = str(i)
-            if(str_ref[0] == "-"):
-                str_ref = 'n' + str_ref[1:]
+            y_count = 0
+            for y in j:
+                if(y != 0):
+                    y_count += 1
 
-            if(single_block_mode):
-                component = component + "COMPONENT MCM_" + str(mode_number) + "_" + str_ref + "\n\tPORT (\n"
-            else:
-                component = component + "COMPONENT MCM_" + str(mode_number) + "_b" + str(block_counter) + "_" + str_ref + "\n\tPORT (\n"
-            
-            component_input = "\t\t\tX : in std_logic_vector ( 7 downto 0 );\n"
-            component_output = "\t\t\t"
-            if(len(j) == 1):
-                component_output = component_output + "Y : "
-            else:
-                y_n = 1
-                for y in j:
-                    if(y != 0):
-                        component_output = component_output + "Y" + str(y_n) + ", "
-                        y_n += 1
+            if(y_count != 0):
+                component = component + "\n"
+                str_ref = str(i)
+                if(str_ref[0] == "-"):
+                    str_ref = 'n' + str_ref[1:]
 
-                component_output = component_output[:-2] + " : " #removing the last ','
-            
-            component_output = component_output + "out std_logic_vector ( 15 downto 0 )\n"
-            component = component + component_input + component_output
-            component = component + "\t);\nEND COMPONENT;\n"
+                if(single_block_mode):
+                    component = component + "COMPONENT MCM_" + str(mode_number) + "_" + str_ref + "\n\tPORT (\n"
+                else:
+                    component = component + "COMPONENT MCM_" + str(mode_number) + "_b" + str(block_counter) + "_" + str_ref + "\n\tPORT (\n"
+                
+                component_input = "\t\t\tX : in std_logic_vector ( 7 downto 0 );\n"
+                component_output = "\t\t\t"
+                
+                if(y_count == 1):
+                    component_output = component_output + "Y : "
+                else:
+                    y_n = 1
+                    for y in j:
+                        if(y != 0):
+                            component_output = component_output + "Y" + str(y_n) + ", "
+                            y_n += 1
+
+                    component_output = component_output[:-2] + " : " #removing the last ','
+                
+                component_output = component_output + "out std_logic_vector ( 15 downto 0 )\n"
+                component = component + component_input + component_output
+                component = component + "\t);\nEND COMPONENT;\n"
     
         f.write(component)
 
@@ -125,37 +134,45 @@ def write_comportamental_body(f, mode, list_of_adders, list_MCM_mode, single_blo
     for mcm_block in list_MCM_mode:
         block_counter += 1
         for i,j in zip(mcm_block.keys(), mcm_block.values()):
-            block += "\n"
-            str_ref = str(i)
-            if(str_ref[0] == "-"):
-                str_ref = 'n' + str_ref[1:]
+            y_count = 0
+            for y in j:
+                if(y != 0):
+                    y_count += 1
 
-            if(single_block_mode):
-                block += "m" + str(m) + " : " + "MCM_" + str(mode) + "_" + str_ref + "\n"
-            else:
-                block += "m" + str(m) + " : " + "MCM_" + str(mode) + "_b" + str(block_counter) + "_" + str_ref + "\n"
+            if(y_count != 0):
+                block += "\n"
+                str_ref = str(i)
+                if(str_ref[0] == "-"):
+                    str_ref = 'n' + str_ref[1:]
 
-            port = "PORT MAP ( X => ref(" + str(i) + "), "
-            input = ""
-            if(len(j) == 1):
-                input = "Y => input(" + str(input_n) + ") );\n"
-                input_tuple = (block_counter,i,1)
-                input_mapping[input_tuple] = "input(" + str(input_n) + ")"
-                input_n += 1
-            else:
-                y_n = 1
-                for y in j:
-                    if(y != 0):
-                        input += "Y" + str(y_n) + " => input(" + str(input_n) + "), "
-                        input_tuple = (block_counter,i,y_n)
-                        input_mapping[input_tuple] = "input(" + str(input_n) + ")"
-                        input_n += 1
-                        y_n += 1
+                if(single_block_mode):
+                    block += "m" + str(m) + " : " + "MCM_" + str(mode) + "_" + str_ref + "\n"
+                else:
+                    block += "m" + str(m) + " : " + "MCM_" + str(mode) + "_b" + str(block_counter) + "_" + str_ref + "\n"
 
-                input = input[:-2] + " );\n" #removing the last ','
+                port = "PORT MAP ( X => ref(" + str(i) + "), "
+                input = ""
+                
 
-            block += port + input
-            m += 1
+                if(y_count == 1):
+                    input = "Y => input(" + str(input_n) + ") );\n"
+                    input_tuple = (block_counter,i,1)
+                    input_mapping[input_tuple] = "input(" + str(input_n) + ")"
+                    input_n += 1
+                else:
+                    y_n = 1
+                    for y in j:
+                        if(y != 0):
+                            input += "Y" + str(y_n) + " => input(" + str(input_n) + "), "
+                            input_tuple = (block_counter,i,y_n)
+                            input_mapping[input_tuple] = "input(" + str(input_n) + ")"
+                            input_n += 1
+                            y_n += 1
+
+                    input = input[:-2] + " );\n" #removing the last ','
+
+                block += port + input
+                m += 1
     
     type = "type t_input is array (0 to " + str(input_n - 1) + ") of std_logic_vector( 15 downto 0);\ntype t_eq_input is array (0 to 15) of eq_input;\n"
     signal = "signal 	input : t_input;\nsignal 	eq_input : t_eq_input;\n"
@@ -220,18 +237,51 @@ def write_comportamental_body(f, mode, list_of_adders, list_MCM_mode, single_blo
     f.write(equation)
 
 
-def generate_mode(mode, list_of_adders, list_MCM_mode):
+def get_min_max_used_ref_value(ref):
+    min_ref = mh.inf
+    max_ref = -mh.inf
+    for key, values in zip(ref.keys(), ref.values()):
+        if(used_ref(values)):
+            if(key < min_ref):
+                min_ref = key
+            if(key > min_ref):
+                max_ref = key
+        
+    return min_ref, max_ref
+
+
+def used_ref(ref_values):
+    y_count = 0
+    for y in ref_values:
+        if(y != 0):
+            y_count += 1
+
+    return bool(y_count)
+
+
+#Working only for modes with two states or less
+def generate_mode(mode, angle, list_of_adders, list_MCM_mode):
 
     if(len(list_MCM_mode) > 1):
         single_block_mode = 0
     else:
         single_block_mode = 1
 
-    list_of_min_ref = []
-    list_of_max_ref = []
-    for i in list_MCM_mode: list_of_min_ref.append(min(i.keys())); list_of_max_ref.append(max(i.keys()))
+    min_ref_used = mh.inf
+    max_ref_used = -mh.inf
+    for state in list_MCM_mode:
+        min_state_ref_used, max_state_ref_used = get_min_max_used_ref_value(state)
+        if(min_state_ref_used < min_ref_used):
+            min_ref_used = min_state_ref_used
+        
+        if(max_state_ref_used > max_ref_used):
+            max_ref_used = max_state_ref_used
+    
     mode_name = "mode_" + str(mode)
-    input = "ref : in ref_bus (" + str(min(list_of_min_ref)) + " to " + str(max(list_of_max_ref)) + " );\n" 
+    if(min_ref_used == mh.inf or max_ref_used == -mh.inf):
+        input = "ref : in ref_bus;\n" 
+    else:
+        input = "ref : in ref_bus (" + str(min_ref_used) + " to " + str(max_ref_used) + " );\n" 
 
     if(not single_block_mode):
         input += "\t\tstate: in std_logic;\n"
@@ -255,9 +305,49 @@ def generate_mode(mode, list_of_adders, list_MCM_mode):
     f.write("\nEND comportamental;")
     f.close()
 
-def generate_mode_tb(mode, list_MCM_mode, list_input):
+    #Generate list of inputs, result outputs of the interpolation filter and test bench for the mode
+    size = 16
+    n_test = 2
+    list_test = []
+    f = open(path_tests + "test" + "_input_" + str(mode) + ".txt", "w")
+    for i in range(n_test):
+        y = 0
+        list_input = []
+        list_base = [0]
+        for state in range(len(list_MCM_mode)):
+            f.write("Test " + str(i + 1) + "\n")
+            f.write("State " + str(state + 1) + "\n")
+            input, base = random_generate_input(f, mode, angle, y, size)
+            list_input.append(input.copy())
+            list_base.append(base)
+            y += 16
+
+        list_test.append(list_input.copy())
+
+    f.close()
+
+    f = open(path_tests + "test" + "_outputs_" + str(mode) + ".txt", "w")
+    input_counter = 0
+    for list_input in list_test:
+        y = 0
+        state_counter = 0
+        input_counter += 1
+        for input in list_input:
+            state_counter += 1
+            f.write("Test " + str(input_counter) + "\n")
+            f.write("State " + str(state_counter) + "\n")
+            generate_output(f, (0,y) ,angle, size, input)
+            y += 16
+    
+    f.close()
+ 
+    generate_mode_tb(mode, min_ref_used, max_ref_used , list_test, list_base, single_block_mode)
+
+
+def generate_mode_tb(mode, min_ref, max_ref, list_test, list_base, single_block_mode):
 
     mode_name = "mode_" + str(mode) + "_tb"
+    state = ""
 
     f = open(path_modes + mode_name + ".vhd", "w")
 
@@ -267,55 +357,77 @@ def generate_mode_tb(mode, list_MCM_mode, list_input):
     f.write(entity)
     architecture = "\nARCHITECTURE comportamental OF " + mode_name + " IS\n"
     f.write(architecture)
-    signal = "\nSIGNAL ref : ref_bus (" + str(min(list_MCM_mode.keys())) + " to " + str(max(list_MCM_mode.keys())) + ");\nSIGNAL output : output_bus;\nFILE file_RESULTS : text;\nCONSTANT c_WIDTH : natural := 4;\n"
-    f.write(signal)
-    component = "\nCOMPONENT " + "mode_" + str(mode) + "\n\tPORT ( \n\t\tref : in ref_bus (" + str(min(list_MCM_mode.keys())) + " to " + str(max(list_MCM_mode.keys())) + ");\n\t\toutput : out output_bus\n\t);\nEND COMPONENT;\n"
-    f.write(component)
-    f.write("\nBEGIN\n\ti1 : mode_" + str(mode) + "\n\tPORT MAP (ref => ref, output => output);\n\tfile_open(file_RESULTS, \"output_results.txt\", write_mode);\n\tinit : PROCESS\n\tVARIABLE v_OLINE  : line;\n\tVARIABLE row  : line;\n")
-    f.write("\n\t\tBEGIN")
-    n_couter = 1
-    for n in list_input:
-        ref_atribution = ""
-        for i, j in zip(n.keys(),n.values()):
-            ref_atribution = ref_atribution + "\n\t\t\tref(" + str(i) + ")" + " <= " + "\"" + str(np.binary_repr(j, width=8)) + "\"; -- " + str(j)
 
-        f.write(ref_atribution)
-        f.write("\n\n\t\t\twrite(row," + str(n_couter) + ", right);\n\t\t\twriteline(file_RESULTS,row);\n\n\t\t\twait for 5 ns;\n\n")
-        loop = "\t\t\tFOR i IN 0 TO 15 LOOP\n\t\t\t\twrite(v_OLINE, output(i), right, c_WIDTH);\n\t\t\t\twriteline(file_RESULTS, v_OLINE);\n\t\t\tEND LOOP;\n\n\t\t\twait for 5 ns;\n"
-        f.write(loop)
-        n_couter += 1
+    if(not single_block_mode):
+        state = "\nSIGNAL state : std_logic;"
+
+    signal = "\nSIGNAL ref : ref_bus (" + str(min_ref) + " to " + str(max_ref) + ");" + state + "\nSIGNAL output : output_bus;\nFILE file_RESULTS : text;\nCONSTANT c_WIDTH : natural := 4;\n"
+    f.write(signal)
+
+    state = ""
+    if(not single_block_mode):
+        state = "\n\t\tstate : in std_logic;"
+
+    component = "\nCOMPONENT " + "mode_" + str(mode) + "\n\tPORT ( \n\t\tref : in ref_bus (" + str(min_ref) + " to " + str(max_ref) + ");" + state + "\n\t\toutput : out output_bus\n\t);\nEND COMPONENT;\n"
+    f.write(component)
+
+    state = ""
+    if(not single_block_mode):
+        state = " state => state,"
+
+    begin = "\nBEGIN\n\ti1 : mode_" + str(mode) + "\n\tPORT MAP (ref => ref," + state + " output => output);\n\tfile_open(file_RESULTS, \"output_results.txt\", write_mode);\n\tinit : PROCESS\n\tVARIABLE v_OLINE  : line;\n\tVARIABLE row  : line;\n"
+
+    if(not single_block_mode):
+        begin += "\tVARIABLE state_row  : line;\n"
+
+    f.write(begin)
+    f.write("\n\t\tBEGIN")
+    test_counter = 0
+    state = ""
+    state_write_file = ""
+    for list_input in list_test:
+        state_counter = 0
+        for input in list_input:
+
+            if(not single_block_mode):
+                state = "\n\t\t\tstate <= \'" + str(state_counter) + "\';"
+                state_write_file = "\n\n\t\t\twrite(state_row," + str(state_counter + 1) + ", right);\n\t\t\twriteline(file_RESULTS,state_row);"
+                f.write(state)
+
+            ref_atribution = ""
+            for i, j in zip(input.keys(),input.values()):
+                ref_atribution = ref_atribution + "\n\t\t\tref(" + str(i - list_base[state_counter]) + ")" + " <= " + "\"" + str(np.binary_repr(j, width=8)) + "\"; -- " + str(j)
+
+            f.write(ref_atribution)
+            f.write("\n\n\t\t\twrite(row," + str(test_counter) + ", right);\n\t\t\twriteline(file_RESULTS,row);" + state_write_file + "\n\n\t\t\twait for 5 ns;\n\n")
+            loop = "\t\t\tFOR i IN 0 TO 15 LOOP\n\t\t\t\twrite(v_OLINE, output(i), right, c_WIDTH);\n\t\t\t\twriteline(file_RESULTS, v_OLINE);\n\t\t\tEND LOOP;\n\n\t\t\twait for 5 ns;\n"
+            f.write(loop)
+            state_counter += 1
+
+        test_counter += 1
 
     f.write("\n\t\t\tfile_close(file_RESULTS);\n\n\t\t\twait;\n\n\tEND PROCESS init;\n\nEND comportamental;")
     f.close()
 
-def random_generate_input(mode, base, min_input, max_input, number_of_input):
-    list_of_input = []
-    f = open(path_tests + "test" + "_input_" + str(mode) + ".txt", "w")
-    for n in range(1, number_of_input + 1):
-        input = {}
-        f.write("Test " + str(n) + "\n")
-        for i in range(min_input, max_input + 1):
-            input[base + i] = rm.randint(0, 255)
-            f.write("ref_" + str(base + i) + " : " + str(input[base + i]) + "\n")
-        list_of_input.append(input.copy())
+def random_generate_input(f, mode, angle, base, size):
+    input = {}
+    for n in range(base, base + size):
+        iIdx = ((n+1)*angle)>>5
+        new_base = iIdx
+        for i in range(0,4):
+            index = 0 + iIdx + i
+            if(index not in input):
+                input[index] = rm.randint(0, 255)
+                f.write("ref_" + str(index) + " : " + str(input[index]) + "\n")
 
-    f.close()
-    return list_of_input
+    return input, new_base
 
-def generate_outputs(mode, base, angle, size, list_input):
-    f = open(path_tests + "test" + "_outputs_" + str(mode) + ".txt", "w")
-    x_base, y_base = base[0], base[1]
-    input_counter = 1
-    for input in list_input:
-        f.write("Test " + str(input_counter) + "\n")
-        for y in range(y_base, size):
-            iIdx = ((y+1)*angle)>>5
-            iFact = ((y+1)*angle)&31
-            f.write(str(calculate_pred_y(input,x_base,iIdx,iFact)) + "\n")
-        
-        input_counter += 1
-    
-    f.close()     
+def generate_output(f, base, angle, size, input):
+    x_base, y_base = base[0], base[1]     
+    for y in range(y_base, y_base + size):
+        iIdx = ((y+1)*angle)>>5
+        iFact = ((y+1)*angle)&31
+        f.write(str(calculate_pred_y(input,x_base,iIdx,iFact)) + "\n")
 
 def calculate_pred_y(ref, x, iIdx, iFact):
     fT = [0 for row in range(4)]
@@ -346,7 +458,9 @@ def assert_equals(mode):
     equal_counter = 0
     test_passed = 0
     first_line = 1
+    line_counter = 0
     for line_eq, line_sim in zip(f_eq, f_sim):
+        line_counter += 1
         if("Test" in line_eq):
             test_counter += 1
             if((output_counter == equal_counter) and not first_line):
@@ -356,9 +470,15 @@ def assert_equals(mode):
             equal_counter = 0
             first_line = 0
         else:
-            output_counter += 1    
-            if(int(line_eq) == int(line_sim, 2)):
-                equal_counter += 1
+            if("State" in line_eq):
+                pass
+            else:
+                output_counter += 1   
+                if(int(line_eq) == int(line_sim, 2)):
+                    equal_counter += 1
+                else:
+                    error = str(line_counter) + " : " + str(int(line_eq)) + " /= " + str(int(line_sim, 2))
+                    print(error)
     
     if(output_counter == equal_counter):
         test_passed += 1
@@ -366,6 +486,20 @@ def assert_equals(mode):
     print("Tests passed: " + str(test_passed) + "/" + str(test_counter))
     f_eq.close()
     f_sim.close()
+
+def standardize_MCM_file(mode, MCM_name):
+    with open(path_input_modes + str(mode) + "/" + MCM_name + ".v") as f:
+        contents = f.read()
+        contents = contents.replace("multiplier_block", MCM_name)
+        contents = contents.replace("input  signed  [31:0] X", "input  unsigned  [7:0] X")
+        contents = contents.replace("[31:0]", "[15:0]")
+
+    with open(path_input_modes + str(mode) + "/" + MCM_name + ".v", "w") as f:
+        f.write(contents)
+
+
+
+
 
 
     

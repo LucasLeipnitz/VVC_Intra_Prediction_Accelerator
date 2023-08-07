@@ -257,7 +257,7 @@ END COMPONENT;
 COMPONENT MCM_35_b2_n14
 	PORT (
 			X : in std_logic_vector ( 7 downto 0 );
-			Y1 : out std_logic_vector ( 15 downto 0 )
+			Y : out std_logic_vector ( 15 downto 0 )
 	);
 END COMPONENT;
 
@@ -270,8 +270,8 @@ END COMPONENT;
 
 type t_input is array (0 to 109) of std_logic_vector( 15 downto 0);
 type t_eq_input is array (0 to 15) of eq_input;
-signal input : t_input;
-signal eq_input : t_eq_input;
+signal 	input : t_input;
+signal 	eq_input : t_eq_input;
 
 
 BEGIN
@@ -378,7 +378,7 @@ m33 : MCM_35_b2_n13
 PORT MAP ( X => ref(-13), Y1 => input(106), Y2 => input(107), Y3 => input(108) );
 
 m34 : MCM_35_b2_n14
-PORT MAP ( X => ref(-14), Y1 => input(109) );
+PORT MAP ( X => ref(-14), Y => input(109) );
 
 PROCESS (state) is
 BEGIN
