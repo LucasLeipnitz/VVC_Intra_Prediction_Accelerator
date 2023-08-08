@@ -32,16 +32,15 @@ BEGIN
 	VARIABLE row  : line;
 
 		BEGIN
-			ref(0) <= "11011111"; -- 223
-			ref(1) <= "10110111"; -- 183
-			ref(2) <= "00100010"; -- 34
-			ref(3) <= "00010001"; -- 17
-			ref(4) <= "01010110"; -- 86
-			ref(5) <= "01010100"; -- 84
-			ref(6) <= "11000001"; -- 193
-			ref(7) <= "00010000"; -- 16
-			ref(8) <= "01000000"; -- 64
-			ref(9) <= "10101100"; -- 172
+			ref(0) <= "00110000"; -- 48
+			ref(1) <= "00000011"; -- 3
+			ref(2) <= "10001011"; -- 139
+			ref(3) <= "01011101"; -- 93
+			ref(4) <= "11000110"; -- 198
+			ref(5) <= "10011011"; -- 155
+			ref(6) <= "10010000"; -- 144
+			ref(7) <= "01010001"; -- 81
+			ref(8) <= "00001100"; -- 12
 
 			write(row,0, right);
 			writeline(file_RESULTS,row);
@@ -55,18 +54,83 @@ BEGIN
 
 			wait for 5 ns;
 
-			ref(0) <= "10010110"; -- 150
-			ref(1) <= "01011001"; -- 89
-			ref(2) <= "10000100"; -- 132
-			ref(3) <= "00000101"; -- 5
-			ref(4) <= "10111010"; -- 186
-			ref(5) <= "11111110"; -- 254
-			ref(6) <= "10100010"; -- 162
-			ref(7) <= "11010100"; -- 212
-			ref(8) <= "00011011"; -- 27
-			ref(9) <= "11011100"; -- 220
+			ref(0) <= "00110100"; -- 52
+			ref(1) <= "00000010"; -- 2
+			ref(2) <= "01111001"; -- 121
+			ref(3) <= "10101000"; -- 168
+			ref(4) <= "10101000"; -- 168
+			ref(5) <= "11010001"; -- 209
+			ref(6) <= "00001010"; -- 10
+			ref(7) <= "10001000"; -- 136
+			ref(8) <= "11110100"; -- 244
 
 			write(row,1, right);
+			writeline(file_RESULTS,row);
+
+			wait for 5 ns;
+
+			FOR i IN 0 TO 15 LOOP
+				write(v_OLINE, output(i), right, c_WIDTH);
+				writeline(file_RESULTS, v_OLINE);
+			END LOOP;
+
+			wait for 5 ns;
+
+			ref(0) <= "00001101"; -- 13
+			ref(1) <= "00110000"; -- 48
+			ref(2) <= "10110000"; -- 176
+			ref(3) <= "01001010"; -- 74
+			ref(4) <= "00001010"; -- 10
+			ref(5) <= "10110111"; -- 183
+			ref(6) <= "01111011"; -- 123
+			ref(7) <= "11010000"; -- 208
+			ref(8) <= "11010100"; -- 212
+
+			write(row,2, right);
+			writeline(file_RESULTS,row);
+
+			wait for 5 ns;
+
+			FOR i IN 0 TO 15 LOOP
+				write(v_OLINE, output(i), right, c_WIDTH);
+				writeline(file_RESULTS, v_OLINE);
+			END LOOP;
+
+			wait for 5 ns;
+
+			ref(0) <= "10110101"; -- 181
+			ref(1) <= "10011101"; -- 157
+			ref(2) <= "00011111"; -- 31
+			ref(3) <= "11101011"; -- 235
+			ref(4) <= "10011110"; -- 158
+			ref(5) <= "01000010"; -- 66
+			ref(6) <= "00000000"; -- 0
+			ref(7) <= "10100011"; -- 163
+			ref(8) <= "10001001"; -- 137
+
+			write(row,3, right);
+			writeline(file_RESULTS,row);
+
+			wait for 5 ns;
+
+			FOR i IN 0 TO 15 LOOP
+				write(v_OLINE, output(i), right, c_WIDTH);
+				writeline(file_RESULTS, v_OLINE);
+			END LOOP;
+
+			wait for 5 ns;
+
+			ref(0) <= "11000111"; -- 199
+			ref(1) <= "11110000"; -- 240
+			ref(2) <= "11001001"; -- 201
+			ref(3) <= "11100000"; -- 224
+			ref(4) <= "11011000"; -- 216
+			ref(5) <= "01000111"; -- 71
+			ref(6) <= "01000000"; -- 64
+			ref(7) <= "10100110"; -- 166
+			ref(8) <= "01100110"; -- 102
+
+			write(row,4, right);
 			writeline(file_RESULTS,row);
 
 			wait for 5 ns;

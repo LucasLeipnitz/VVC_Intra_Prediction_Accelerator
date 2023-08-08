@@ -11,14 +11,14 @@ END mode_18_tb;
 
 ARCHITECTURE comportamental OF mode_18_tb IS
 
-SIGNAL ref : ref_bus (1 to -inf);
+SIGNAL ref : ref_bus (1 to 1);
 SIGNAL output : output_bus;
 FILE file_RESULTS : text;
 CONSTANT c_WIDTH : natural := 4;
 
 COMPONENT mode_18
 	PORT ( 
-		ref : in ref_bus (1 to -inf);
+		ref : in ref_bus (1 to 1);
 		output : out output_bus
 	);
 END COMPONENT;
@@ -32,10 +32,7 @@ BEGIN
 	VARIABLE row  : line;
 
 		BEGIN
-			ref(0) <= "01111111"; -- 127
-			ref(1) <= "01111000"; -- 120
-			ref(2) <= "10010111"; -- 151
-			ref(3) <= "01001010"; -- 74
+			ref(1) <= "11101100"; -- 236
 
 			write(row,0, right);
 			writeline(file_RESULTS,row);
@@ -49,12 +46,51 @@ BEGIN
 
 			wait for 5 ns;
 
-			ref(0) <= "01100101"; -- 101
-			ref(1) <= "11011101"; -- 221
-			ref(2) <= "01000001"; -- 65
-			ref(3) <= "01111100"; -- 124
+			ref(1) <= "10010010"; -- 146
 
 			write(row,1, right);
+			writeline(file_RESULTS,row);
+
+			wait for 5 ns;
+
+			FOR i IN 0 TO 15 LOOP
+				write(v_OLINE, output(i), right, c_WIDTH);
+				writeline(file_RESULTS, v_OLINE);
+			END LOOP;
+
+			wait for 5 ns;
+
+			ref(1) <= "01010010"; -- 82
+
+			write(row,2, right);
+			writeline(file_RESULTS,row);
+
+			wait for 5 ns;
+
+			FOR i IN 0 TO 15 LOOP
+				write(v_OLINE, output(i), right, c_WIDTH);
+				writeline(file_RESULTS, v_OLINE);
+			END LOOP;
+
+			wait for 5 ns;
+
+			ref(1) <= "10001001"; -- 137
+
+			write(row,3, right);
+			writeline(file_RESULTS,row);
+
+			wait for 5 ns;
+
+			FOR i IN 0 TO 15 LOOP
+				write(v_OLINE, output(i), right, c_WIDTH);
+				writeline(file_RESULTS, v_OLINE);
+			END LOOP;
+
+			wait for 5 ns;
+
+			ref(1) <= "11110010"; -- 242
+
+			write(row,4, right);
 			writeline(file_RESULTS,row);
 
 			wait for 5 ns;

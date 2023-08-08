@@ -4,32 +4,32 @@
 Number of Blocks: 1
 Number of Replicas: 16
 Number of References: 19
-Number of Coef Counter: 35
-Mean of coefficients per references: 1.84
+Number of Coef Counter: 50
+Mean of coefficients per references: 2.63
 ##########################################################
 
 3
 Number of Blocks: 2
 Number of Replicas: 1
 Number of References: 36
-Number of Coef Counter: 117
-Mean of coefficients per references: 3.25
+Number of Coef Counter: 125
+Mean of coefficients per references: 3.47
 ##########################################################
 
 7
 Number of Blocks: 1
 Number of Replicas: 1
 Number of References: 13
-Number of Coef Counter: 58
-Mean of coefficients per references: 4.46
+Number of Coef Counter: 64
+Mean of coefficients per references: 4.92
 ##########################################################
 
 10
 Number of Blocks: 1
 Number of Replicas: 2
 Number of References: 10
-Number of Coef Counter: 51
-Mean of coefficients per references: 5.1
+Number of Coef Counter: 59
+Mean of coefficients per references: 5.9
 ##########################################################
 
 18
@@ -44,72 +44,72 @@ Mean of coefficients per references: 1.0
 Number of Blocks: 1
 Number of Replicas: 1
 Number of References: 6
-Number of Coef Counter: 51
-Mean of coefficients per references: 8.5
+Number of Coef Counter: 64
+Mean of coefficients per references: 10.67
 ##########################################################
 
 26
 Number of Blocks: 1
 Number of Replicas: 2
 Number of References: 9
-Number of Coef Counter: 51
-Mean of coefficients per references: 5.67
+Number of Coef Counter: 59
+Mean of coefficients per references: 6.56
 ##########################################################
 
 30
 Number of Blocks: 1
 Number of Replicas: 2
 Number of References: 13
-Number of Coef Counter: 55
-Mean of coefficients per references: 4.23
+Number of Coef Counter: 61
+Mean of coefficients per references: 4.69
 ##########################################################
 
 33
 Number of Blocks: 2
 Number of Replicas: 1
 Number of References: 35
-Number of Coef Counter: 117
-Mean of coefficients per references: 3.34
+Number of Coef Counter: 125
+Mean of coefficients per references: 3.57
 ##########################################################
 
 34
 Number of Blocks: 1
 Number of Replicas: 16
 Number of References: 19
-Number of Coef Counter: 35
-Mean of coefficients per references: 1.84
+Number of Coef Counter: 50
+Mean of coefficients per references: 2.63
 ##########################################################
 
 35
 Number of Blocks: 2
 Number of Replicas: 1
 Number of References: 35
-Number of Coef Counter: 117
-Mean of coefficients per references: 3.34
+Number of Coef Counter: 125
+Mean of coefficients per references: 3.57
 ##########################################################
 
 43
 Number of Blocks: 1
 Number of Replicas: 1
 Number of References: 8
-Number of Coef Counter: 53
-Mean of coefficients per references: 6.62
+Number of Coef Counter: 64
+Mean of coefficients per references: 8.0
 ##########################################################
 
 46
 Number of Blocks: 1
 Number of Replicas: 2
 Number of References: 5
-Number of Coef Counter: 40
-Mean of coefficients per references: 8.0
+Number of Coef Counter: 57
+Mean of coefficients per references: 11.4
 ##########################################################
 
 49
 Number of Blocks: 2
 Number of Replicas: 1
 Number of References: 8
-Number of Coef Counter: 87
-Mean of coefficients per references: 10.88
+Number of Coef Counter: 64
+Mean of coefficients per references: 8.0
 ##########################################################
 
 50
@@ -124,15 +124,15 @@ Mean of coefficients per references: 1.0
 Number of Blocks: 1
 Number of Replicas: 2
 Number of References: 6
-Number of Coef Counter: 40
-Mean of coefficients per references: 6.67
+Number of Coef Counter: 57
+Mean of coefficients per references: 9.5
 
 Number of modes with 1 block(s): 12
 Number of modes with 2 block(s): 4
 Mean of Number of Blocks: 1.25
 Mean of Number of Replicas: 5.06
 Mean of Number of References: 14.38
-Mean of Number of Coef Counter: 57.19
-Mean of coefficients per references: 4.73
-Max coefficients in a mode: 117
+Mean of Number of Coef Counter: 64.5
+Mean of coefficients per references: 5.47
+Max coefficients in a mode: 125
 Max coefficients in a reference: 16

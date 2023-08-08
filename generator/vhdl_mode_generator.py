@@ -1,10 +1,13 @@
 import numpy as np
 import random as rm
 import math as mh
+import pandas as pd
 
 path_modes = "./output/modes/"
 path_tests = "./output/tests/"
 path_input_modes = "./input/modes/"
+
+number_of_tests = 5
 
 fc_coefficients = [[0 for col in range(4)] for row in range(32)]
 fc_coefficients[0][0] = 0
@@ -76,12 +79,99 @@ fc_coefficients[16][1] = 36
 fc_coefficients[16][2] = 36
 fc_coefficients[16][3] = -4
 
-def simmetry_rule(p, index):
-    return fc_coefficients[32 - p][3 - index]
+fg_coefficients = [[0 for col in range(4)] for row in range(32)]
+fg_coefficients[0][0] = 16 
+fg_coefficients[1][0] = 16
+fg_coefficients[2][0] = 15
+fg_coefficients[3][0] = 15
+fg_coefficients[4][0] = 14
+fg_coefficients[5][0] = 14
+fg_coefficients[6][0] = 13
+fg_coefficients[7][0] = 13
+fg_coefficients[8][0] = 12
+fg_coefficients[9][0] = 12
+fg_coefficients[10][0] = 11
+fg_coefficients[11][0] = 11
+fg_coefficients[12][0] = 10
+fg_coefficients[13][0] = 10
+fg_coefficients[14][0] = 9
+fg_coefficients[15][0] = 9
+fg_coefficients[16][0] = 8
+fg_coefficients[17][0] = 8
+fg_coefficients[18][0] = 7
+fg_coefficients[19][0] = 7
+fg_coefficients[20][0] = 6
+fg_coefficients[21][0] = 6
+fg_coefficients[22][0] = 5
+fg_coefficients[23][0] = 5
+fg_coefficients[24][0] = 4
+fg_coefficients[25][0] = 4
+fg_coefficients[26][0] = 3
+fg_coefficients[27][0] = 3
+fg_coefficients[28][0] = 2
+fg_coefficients[29][0] = 2
+fg_coefficients[30][0] = 1
+fg_coefficients[31][0] = 1 
+fg_coefficients[0][1] = 32
+fg_coefficients[1][1] = 32
+fg_coefficients[2][1] = 31
+fg_coefficients[3][1] = 31
+fg_coefficients[4][1] = 30
+fg_coefficients[5][1] = 30
+fg_coefficients[6][1] = 29
+fg_coefficients[7][1] = 29
+fg_coefficients[8][1] = 28
+fg_coefficients[9][1] = 28
+fg_coefficients[10][1] = 27
+fg_coefficients[11][1] = 27
+fg_coefficients[12][1] = 26
+fg_coefficients[13][1] = 26
+fg_coefficients[14][1] = 25
+fg_coefficients[15][1] = 25
+fg_coefficients[16][1] = 24
+fg_coefficients[17][1] = 24
+fg_coefficients[18][1] = 23
+fg_coefficients[19][1] = 23
+fg_coefficients[20][1] = 22
+fg_coefficients[21][1] = 22
+fg_coefficients[22][1] = 21
+fg_coefficients[23][1] = 21
+fg_coefficients[24][1] = 20
+fg_coefficients[25][1] = 20
+fg_coefficients[26][1] = 19
+fg_coefficients[27][1] = 19
+fg_coefficients[28][1] = 18
+fg_coefficients[29][1] = 18
+fg_coefficients[30][1] = 17
+fg_coefficients[31][1] = 17
+fg_coefficients[0][2] = 16
+fg_coefficients[0][3] = 0
+fg_coefficients[1][2] = 16
+fg_coefficients[1][3] = 0
+
+ft_coefficients = {"fc": fc_coefficients, "fg": fg_coefficients}
+
+intraHorVerDistThres = {2: 24, 3: 14, 4:2, 5:0, 6:0}
+
+def simmetry_rule(p, index, coef):
+    if(coef == "fc"):
+        return fc_coefficients[32 - p][3 - index]
+    elif(coef == "fg"):
+        return fg_coefficients[33 - p][3 - index]
+    else:
+        raise Exception("Coefficient matrix unknow: " + coef) 
 
 for i in range(17,32):
     for j in range(0,4):
-        fc_coefficients[i][j] = simmetry_rule(i, j)
+        ft_coefficients["fc"][i][j] = simmetry_rule(i, j, "fc")
+
+for i in range(2,32):
+    for j in range(2,4):
+        ft_coefficients["fg"][i][j] = simmetry_rule(i, j, "fg")
+
+def print_table():
+    print(pd.DataFrame.from_dict(ft_coefficients))
+    
 
 def write_mcm_component(f, mode_number, list_MCM_mode, single_block_mode):
     block_counter = 0
@@ -244,7 +334,8 @@ def get_min_max_used_ref_value(ref):
         if(used_ref(values)):
             if(key < min_ref):
                 min_ref = key
-            if(key > min_ref):
+
+            if(key > max_ref):
                 max_ref = key
         
     return min_ref, max_ref
@@ -260,7 +351,7 @@ def used_ref(ref_values):
 
 
 #Working only for modes with two states or less
-def generate_mode(mode, angle, list_of_adders, list_MCM_mode):
+def generate_mode(mode, angle, list_of_adders, list_MCM_mode, block_size):
 
     if(len(list_MCM_mode) > 1):
         single_block_mode = 0
@@ -269,8 +360,11 @@ def generate_mode(mode, angle, list_of_adders, list_MCM_mode):
 
     min_ref_used = mh.inf
     max_ref_used = -mh.inf
+    state_counter = 0
     for state in list_MCM_mode:
+        state_counter += 1
         min_state_ref_used, max_state_ref_used = get_min_max_used_ref_value(state)
+
         if(min_state_ref_used < min_ref_used):
             min_ref_used = min_state_ref_used
         
@@ -278,7 +372,7 @@ def generate_mode(mode, angle, list_of_adders, list_MCM_mode):
             max_ref_used = max_state_ref_used
     
     mode_name = "mode_" + str(mode)
-    if(min_ref_used == mh.inf or max_ref_used == -mh.inf):
+    if(max_ref_used == min_ref_used):
         input = "ref : in ref_bus;\n" 
     else:
         input = "ref : in ref_bus (" + str(min_ref_used) + " to " + str(max_ref_used) + " );\n" 
@@ -307,7 +401,7 @@ def generate_mode(mode, angle, list_of_adders, list_MCM_mode):
 
     #Generate list of inputs, result outputs of the interpolation filter and test bench for the mode
     size = 16
-    n_test = 2
+    n_test = number_of_tests
     list_test = []
     f = open(path_tests + "test" + "_input_" + str(mode) + ".txt", "w")
     for i in range(n_test):
@@ -335,8 +429,18 @@ def generate_mode(mode, angle, list_of_adders, list_MCM_mode):
         for input in list_input:
             state_counter += 1
             f.write("Test " + str(input_counter) + "\n")
-            f.write("State " + str(state_counter) + "\n")
-            generate_output(f, (0,y) ,angle, size, input)
+            if(not single_block_mode):
+                f.write("State " + str(state_counter) + "\n")
+
+            #Find if mode uses fC or fG coefficients
+            nTbS = int(mh.log2(block_size) + mh.log2(block_size)) >> 1
+            minDistVerHor = min(abs(mode - 50), abs(mode - 18))
+            if(minDistVerHor > intraHorVerDistThres[nTbS]):
+                filterFlag = 1
+            else:
+                filterFlag = 0
+
+            generate_output(f, (0,y) ,angle, size, input, filterFlag)
             y += 16
     
     f.close()
@@ -396,7 +500,9 @@ def generate_mode_tb(mode, min_ref, max_ref, list_test, list_base, single_block_
 
             ref_atribution = ""
             for i, j in zip(input.keys(),input.values()):
-                ref_atribution = ref_atribution + "\n\t\t\tref(" + str(i - list_base[state_counter]) + ")" + " <= " + "\"" + str(np.binary_repr(j, width=8)) + "\"; -- " + str(j)
+                index = i - list_base[state_counter]
+                if((index >= min_ref) and (index <= max_ref)):
+                    ref_atribution = ref_atribution + "\n\t\t\tref(" + str(index) + ")" + " <= " + "\"" + str(np.binary_repr(j, width=8)) + "\"; -- " + str(j)
 
             f.write(ref_atribution)
             f.write("\n\n\t\t\twrite(row," + str(test_counter) + ", right);\n\t\t\twriteline(file_RESULTS,row);" + state_write_file + "\n\n\t\t\twait for 5 ns;\n\n")
@@ -422,17 +528,24 @@ def random_generate_input(f, mode, angle, base, size):
 
     return input, new_base
 
-def generate_output(f, base, angle, size, input):
+def generate_output(f, base, angle, size, input, filterFlag):
     x_base, y_base = base[0], base[1]     
     for y in range(y_base, y_base + size):
         iIdx = ((y+1)*angle)>>5
         iFact = ((y+1)*angle)&31
-        f.write(str(calculate_pred_y(input,x_base,iIdx,iFact)) + "\n")
+        f.write(str(calculate_pred_y(input,x_base,iIdx,iFact, filterFlag)) + "\n")
+        #print(str(calculate_pred_y(input,x_base,iIdx,iFact, filterFlag)) + "\n")
 
-def calculate_pred_y(ref, x, iIdx, iFact):
+def calculate_pred_y(ref, x, iIdx, iFact, filterFlag):
     fT = [0 for row in range(4)]
+
+    if(filterFlag):
+        coefficients = "fg"
+    else:
+        coefficients = "fc"
+
     for j in range (0,4):
-        fT[j] = fc_coefficients[iFact][j]
+        fT[j] = ft_coefficients[coefficients][iFact][j]
 
     pred = 0
     for i in range (0,4):
@@ -487,15 +600,16 @@ def assert_equals(mode):
     f_eq.close()
     f_sim.close()
 
-def standardize_MCM_file(mode, MCM_name):
-    with open(path_input_modes + str(mode) + "/" + MCM_name + ".v") as f:
-        contents = f.read()
-        contents = contents.replace("multiplier_block", MCM_name)
-        contents = contents.replace("input  signed  [31:0] X", "input  unsigned  [7:0] X")
-        contents = contents.replace("[31:0]", "[15:0]")
+def standardize_MCM_file(f, MCM_name):
+    #with open(path_input_modes + str(mode) + "/" + MCM_name + ".v") as f:
+    contents = f.read()
+    contents = contents.replace("multiplier_block", MCM_name)
+    contents = contents.replace("input  signed  [31:0] X", "input  unsigned  [7:0] X")
+    contents = contents.replace("[31:0]", "[15:0]")
 
-    with open(path_input_modes + str(mode) + "/" + MCM_name + ".v", "w") as f:
-        f.write(contents)
+    #with open(path_input_modes + str(mode) + "/" + MCM_name + ".v", "w") as f:
+    #f.write(contents)
+    return contents
 
 
 

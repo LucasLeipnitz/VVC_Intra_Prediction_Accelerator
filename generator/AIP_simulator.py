@@ -165,8 +165,88 @@ fc_coefficients = {
     "0[3]" : 0
 }
 
-def simmetry_rule(p, index):
-    return str(32 - int(p)), str(3 - int(index))
+fg_coefficients = {
+    "0[0]" : 16, 
+    "1[0]" : 16,
+    "2[0]" : 15,
+    "3[0]" : 15,
+    "4[0]" : 14,
+    "5[0]" : 14,
+    "6[0]" : 13,
+    "7[0]" : 13,
+    "8[0]" : 12,
+    "9[0]" : 12,
+    "10[0]" : 11,
+    "11[0]" : 11,
+    "12[0]" : 10,
+    "13[0]" : 10,
+    "14[0]" : 9,
+    "15[0]" : 9,
+    "16[0]" : 8,
+    "17[0]" : 8,
+    "18[0]" : 7,
+    "19[0]" : 7,
+    "20[0]" : 6,
+    "21[0]" : 6,
+    "22[0]" : 5,
+    "23[0]" : 5,
+    "24[0]" : 4,
+    "25[0]" : 4,
+    "26[0]" : 3,
+    "27[0]" : 3,
+    "28[0]" : 2,
+    "29[0]" : 2,
+    "30[0]" : 1,
+    "31[0]" : 1,
+    "0[1]" : 32, 
+    "1[1]" : 32,
+    "2[1]" : 31,
+    "3[1]" : 31,
+    "4[1]" : 30,
+    "5[1]" : 30,
+    "6[1]" : 29,
+    "7[1]" : 29,
+    "8[1]" : 28,
+    "9[1]" : 28,
+    "10[1]" : 27,
+    "11[1]" : 27,
+    "12[1]" : 26,
+    "13[1]" : 26,
+    "14[1]" : 25,
+    "15[1]" : 25,
+    "16[1]" : 24,
+    "17[1]" : 24,
+    "18[1]" : 23,
+    "19[1]" : 23,
+    "20[1]" : 22,
+    "21[1]" : 22,
+    "22[1]" : 21,
+    "23[1]" : 21,
+    "24[1]" : 20,
+    "25[1]" : 20,
+    "26[1]" : 19,
+    "27[1]" : 19,
+    "28[1]" : 18,
+    "29[1]" : 18,
+    "30[1]" : 17,
+    "31[1]" : 17,
+    "0[2]" : 16,
+    "0[3]" : 0,
+    "1[2]" : 16,
+    "1[3]" : 0
+}
+
+ft_coefficients = {"fc": fc_coefficients, "fg": fg_coefficients}
+
+intraHorVerDistThres = {2: 24, 3: 14, 4:2, 5:0, 6:0}
+
+def simmetry_rule(p, index, coef):
+    if(coef == "fc"):
+        return str(32 - int(p)), str(3 - int(index))
+    elif(coef == "fg"):
+        return str(33 - int(p)), str(3 - int(index))   
+    else:
+        raise Exception("Coefficient matrix unknow: " + coef)    
 
 
 def calculate_iidx_ifact(modes, angles, size):
@@ -347,16 +427,15 @@ def calculate_MCM_blocks(mode, state_iidx, state_ifact, base = 0, height = 1, pr
 
 def map_to_coefficients(constants_vectors, coefficients, print_values = 0):
     coefficients_vectors = {}
-
     for i,j in zip(constants_vectors.values(),constants_vectors.keys()):
         coefficients_vectors[j] = []
         for constant in i:
-            if(constant not in coefficients):
+            if(constant not in ft_coefficients[coefficients]):
                 p, index = re.findall(r'\d+', constant) #get p[index] from string containing and put it in two separately variables
-                p, index = simmetry_rule(p, index) #transform in a value that exists in the coefficients by the simmetry rule
-                value = coefficients[p + '[' + index + ']']
+                p, index = simmetry_rule(p, index, coefficients) #transform in a value that exists in the coefficients by the simmetry rule
+                value = ft_coefficients[coefficients][p + '[' + index + ']']
             else:
-                value = coefficients[constant]
+                value = ft_coefficients[coefficients][constant]
             
             if(value not in coefficients_vectors[j]):
                     coefficients_vectors[j].append(value)
@@ -369,7 +448,7 @@ def map_to_coefficients(constants_vectors, coefficients, print_values = 0):
     return coefficients_vectors
 
 
-def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, state_size = 32, height = 1, write_file = 0):
+def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size ,state_size = 32, height = 1, write_file = 0):
     list_position_MCM = []
     list_coefficients_MCM = []
     list_of_counters = {}
@@ -387,6 +466,19 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
             fp.write("##########################################################\n\n" + str(mode))
             fc.write("##########################################################\n\n" + str(mode))
             fm.write("##########################################################\n\n" + str(mode))
+
+        #Find if mode uses fC or fG coefficients
+        nTbS = int(mh.log2(block_size) + mh.log2(block_size)) >> 1
+        minDistVerHor = min(abs(mode - 50), abs(mode - 18))
+        if(minDistVerHor > intraHorVerDistThres[nTbS]):
+            filterFlag = 1
+        else:
+            filterFlag = 0
+
+        if(filterFlag):
+            coefficients = "fg"
+        else:
+            coefficients = "fc"
 
         list_of_states_position = []
         list_of_states_coefficients = []
@@ -415,7 +507,7 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
                 list_of_states_position.append(dict_position_MCM.copy())
                 
                 dict_coefficients_MCM = {}
-                MCM_blocks = map_to_coefficients(MCM_blocks,fc_coefficients)
+                MCM_blocks = map_to_coefficients(MCM_blocks,coefficients)
                 for key, block in zip(MCM_blocks.keys(),MCM_blocks.values()):
                     if(write_file):
                         fc.write("\n" + str(key) + ": ")
@@ -524,7 +616,7 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
 
     return list_position_MCM, list_coefficients_MCM
 
-def calculate_adders(modes, list_position_MCM, list_coefficients_MCM, coefficients, write_file = 0):
+def calculate_adders(modes, list_position_MCM, list_coefficients_MCM, block_size, write_file = 0):
     
     if(write_file):
         fa = open(path_output_blocks + "modes_adders.txt", "w")
@@ -535,6 +627,19 @@ def calculate_adders(modes, list_position_MCM, list_coefficients_MCM, coefficien
         if(write_file):
             fa.write("##########################################################\n\n" + str(mode))
             fao.write("##########################################################\n\n" + str(mode))
+
+        #Find if mode uses fC or fG coefficients
+        nTbS = int(mh.log2(block_size) + mh.log2(block_size)) >> 1
+        minDistVerHor = min(abs(mode - 50), abs(mode - 18))
+        if(minDistVerHor > intraHorVerDistThres[nTbS]):
+            filterFlag = 1
+        else:
+            filterFlag = 0
+
+        if(filterFlag):
+            coefficients = "fg"
+        else:
+            coefficients = "fc"
         
         matrix_of_adders = [] #is a list of list_of_adders
         block_counter = 0
@@ -562,12 +667,12 @@ def calculate_adders(modes, list_position_MCM, list_coefficients_MCM, coefficien
                         #search all 4 values of the filter
                         for k in range(j, j+4):
                             range_position_value = p + '[' + str(value_index) + ']'
-                            if(range_position_value not in coefficients):
+                            if(range_position_value not in ft_coefficients[coefficients]):
                                 d, index = re.findall(r'\d+', range_position_value) #get p[index] from string containing and put it in two separately variables
-                                d, index = simmetry_rule(d, index) #transform in a value that exists in the coefficients by the simmetry rule
-                                value = coefficients[d + '[' + index + ']']
+                                d, index = simmetry_rule(d, index, coefficients) #transform in a value that exists in the coefficients by the simmetry rule
+                                value = ft_coefficients[coefficients][d + '[' + index + ']']
                             else:
-                                value = coefficients[range_position_value]
+                                value = ft_coefficients[coefficients][range_position_value]
                             
                             if(value == 0):
                                 if(write_file):

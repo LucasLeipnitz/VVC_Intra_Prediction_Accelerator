@@ -1,24 +1,60 @@
 Test 1
 State 1
-ref_-1 : 177
-ref_0 : 78
-ref_1 : 21
-ref_2 : 164
+ref_-1 : 42
+ref_0 : 51
+ref_1 : 94
+ref_2 : 128
 Test 1
 State 2
-ref_-1 : 249
-ref_0 : 114
-ref_1 : 17
-ref_2 : 164
+ref_-1 : 203
+ref_0 : 250
+ref_1 : 232
+ref_2 : 9
 Test 2
 State 1
-ref_-1 : 189
-ref_0 : 237
-ref_1 : 72
-ref_2 : 182
+ref_-1 : 22
+ref_0 : 186
+ref_1 : 108
+ref_2 : 22
 Test 2
 State 2
-ref_-1 : 239
-ref_0 : 122
-ref_1 : 102
-ref_2 : 0
+ref_-1 : 24
+ref_0 : 39
+ref_1 : 252
+ref_2 : 1
+Test 3
+State 1
+ref_-1 : 249
+ref_0 : 150
+ref_1 : 202
+ref_2 : 250
+Test 3
+State 2
+ref_-1 : 72
+ref_0 : 136
+ref_1 : 29
+ref_2 : 229
+Test 4
+State 1
+ref_-1 : 229
+ref_0 : 201
+ref_1 : 164
+ref_2 : 170
+Test 4
+State 2
+ref_-1 : 26
+ref_0 : 221
+ref_1 : 5
+ref_2 : 13
+Test 5
+State 1
+ref_-1 : 113
+ref_0 : 91
+ref_1 : 166
+ref_2 : 133
+Test 5
+State 2
+ref_-1 : 206
+ref_0 : 233
+ref_1 : 209
+ref_2 : 219

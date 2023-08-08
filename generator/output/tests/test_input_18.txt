@@ -1,12 +1,30 @@
 Test 1
 State 1
-ref_0 : 127
-ref_1 : 120
-ref_2 : 151
-ref_3 : 74
+ref_0 : 255
+ref_1 : 236
+ref_2 : 114
+ref_3 : 106
 Test 2
 State 1
-ref_0 : 101
-ref_1 : 221
-ref_2 : 65
-ref_3 : 124
+ref_0 : 35
+ref_1 : 146
+ref_2 : 223
+ref_3 : 39
+Test 3
+State 1
+ref_0 : 58
+ref_1 : 82
+ref_2 : 183
+ref_3 : 73
+Test 4
+State 1
+ref_0 : 140
+ref_1 : 137
+ref_2 : 53
+ref_3 : 172
+Test 5
+State 1
+ref_0 : 5
+ref_1 : 242
+ref_2 : 52
+ref_3 : 35
