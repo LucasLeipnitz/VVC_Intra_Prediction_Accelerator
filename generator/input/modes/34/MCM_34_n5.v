@@ -6,7 +6,7 @@
  * (see http://www.opensource.org/licenses/bsd-license.php)
  *------------------------------------------------------------------------------ */
 
-module MCM_34_n1 (
+module MCM_34_n5 (
     X,
     Y1,
     Y2
@@ -37,5 +37,5 @@ module MCM_34_n1 (
   assign Y[0] = w16;
   assign Y[1] = w32;
 
-endmodule //MCM_34_n1
+endmodule //MCM_34_n5
 

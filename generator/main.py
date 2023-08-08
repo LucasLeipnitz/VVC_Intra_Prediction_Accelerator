@@ -6,7 +6,7 @@ path_input_modes = "./input/modes/"
 
 option = 6
 modes = sim.modes3
-current_mode = 7
+current_mode = 2
 block_size = 32
 assert_equals = 1
 

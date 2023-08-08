@@ -6,7 +6,7 @@
  * (see http://www.opensource.org/licenses/bsd-license.php)
  *------------------------------------------------------------------------------ */
 
-module MCM_34_n1 (
+module MCM_35_b1_n4 (
     X,
     Y1,
     Y2
@@ -27,15 +27,21 @@ module MCM_34_n1 (
 
   wire signed [15:0]
     w1,
-    w16,
-    w32;
+    w4,
+    w5,
+    w20,
+    w25,
+    w10;
 
   assign w1 = X;
-  assign w16 = w1 << 4;
-  assign w32 = w1 << 5;
+  assign w4 = w1 << 2;
+  assign w5 = w1 + w4;
+  assign w20 = w5 << 2;
+  assign w25 = w5 + w20;
+  assign w10 = w5 << 1;
 
-  assign Y[0] = w16;
-  assign Y[1] = w32;
+  assign Y[0] = w10;
+  assign Y[1] = w25;
 
-endmodule //MCM_34_n1
+endmodule //MCM_35_b1_n4
 
