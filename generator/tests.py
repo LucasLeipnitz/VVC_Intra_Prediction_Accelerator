@@ -61,7 +61,7 @@ for mode, angle, list_of_modes_adders, list_coefficients_MCM  in zip(test_modes,
 #gen.standardize_MCM_file(34,"MCM_34_n1")
 #gen.standardize_MCM_file(36,"MCM_36_n1")
 
-block_size = 32
+'''block_size = 32
 mode = 3
 y = 0
 angle = 29
@@ -76,7 +76,7 @@ if(minDistVerHor > sim.intraHorVerDistThres[nTbS]):
 else:
     filterFlag = 0
 
-gen.generate_output("", (0,y), angle, size, input, filterFlag)
+gen.generate_output("", (0,y), angle, size, input, filterFlag)'''
 
 #gen.print_table()
 
@@ -97,4 +97,5 @@ iFact = ((y+1)*angle)&31
 print(gen.calculate_pred_y(input, x, iIdx, iFact)) #24
 '''
 
+sim.calculate_equations_planar(32, 32)
 

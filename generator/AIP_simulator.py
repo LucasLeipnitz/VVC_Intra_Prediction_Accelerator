@@ -10,6 +10,7 @@ path_output_blocks = path + "output/mcm_block/"
 path_output_states = path + "output/states/"
 path_values = path + "output/values_iidx_ifact/"
 path_samples = path + "output/samples/"
+path_planar = path + "output/planar/"
 
 modes1 = [34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]
 modes2 = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34]
@@ -720,4 +721,30 @@ def map_modes_to_angles(modes):
         angles.append(angles_map[mode])
 
     return angles
+
+
+def calculate_equations_planar(nTbW, nTbH):
+        equations_predV = []
+        equations_predH = []
+        columns = []
+        for x in range(nTbW): 
+            columns.append(x)
+            current_column_predV = []
+            current_column_predH = []
+            for y in range(nTbH):
+                current_column_predV.append("(" + str(nTbH - 1 - y) + "*p[" + str(x) + "][-1] + " + str(y + 1) + "*p[-1][" + str(nTbW) + "])<<" + str(mh.log2(nTbW)))
+                current_column_predH.append("(" + str(nTbW - 1 - x) + "*p[-1][" + str(y) + "] + " + str(x + 1) + "*p[" + str(nTbW) + "][-1])<<" + str(mh.log2(nTbH)))
+
+            equations_predV.append(current_column_predV)
+            equations_predH.append(current_column_predH)
+
+        df = pd.DataFrame(list(zip(*equations_predV)),columns = columns)
+        excel_writer = pd.ExcelWriter(path + path_planar + "planar_predV" + "_" + str(nTbW) + "x" + str(nTbH) + ".xlsx", engine='xlsxwriter') 
+        df.to_excel(excel_writer, sheet_name='predV', index=False, na_rep='NaN')
+        excel_writer._save()
+        df = pd.DataFrame(list(zip(*equations_predH)),columns = columns)
+        excel_writer = pd.ExcelWriter(path + path_planar + "planar_predH" + "_" + str(nTbW) + "x" + str(nTbH) + ".xlsx", engine='xlsxwriter') 
+        df.to_excel(excel_writer, sheet_name='predH', index=False, na_rep='NaN')
+        excel_writer._save()
+        return equations_predV
 
