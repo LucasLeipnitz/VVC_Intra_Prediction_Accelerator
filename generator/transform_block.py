@@ -233,7 +233,13 @@ class TransformBlock:
     def normalize_ref(self):
         for i in self.ref.keys():
             x,y = re.findall(r'\d+', self.ref[i]) #Get x and y value from string
+
+            if(self.predModeIntra >= 34):
+                index = y
+            else:
+                index = x
+
             if(i < 0):
-                if(y != str(abs(i) - 1)):
-                    self.ref[int('-' + str(int(y) + 1))] = self.ref[i]
+                if(index != str(abs(i) - 1)):
+                    self.ref[int('-' + str(int(index) + 1))] = self.ref[i]
                     self.ref[i] = 'NU'

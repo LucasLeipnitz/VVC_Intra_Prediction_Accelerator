@@ -6,15 +6,16 @@ USE ieee.numeric_std.all;
 USE work.mode_in_out.all;
 -----------------------------------------------
 
-ENTITY planar_eq_block IS
+ENTITY predV_block IS
 	PORT (
-		ref : in ref_bus (0 to 1);
+		ref : in std_logic_vector ( 7 downto 0);
+		opposite_ref : in std_logic_vector ( 7 downto 0);
 		state: in std_logic;
 		output : out planar_eq_out
 	);
-END planar_eq_block;
+END predV_block;
 
-ARCHITECTURE comportamental OF planar_eq_block IS
+ARCHITECTURE comportamental OF predV_block IS
 
 COMPONENT MCM_planar_1
 	PORT (
@@ -49,15 +50,15 @@ PORT MAP (X => mcm_in(0), Y17 => mcm_out_1(16), Y16 => mcm_out_1(15), Y15 => mcm
 mcm_v2: MCM_planar_2
 PORT MAP (X => mcm_in(1), Y1 => mcm_out_2(15), Y2 => mcm_out_2(14), Y3 => mcm_out_2(13), Y4 => mcm_out_2(12), Y5 => mcm_out_2(11), Y6 => mcm_out_2(10), Y7 => mcm_out_2(9), Y8 => mcm_out_2(8), Y9 => mcm_out_2(7), Y10 => mcm_out_2(6), Y11 => mcm_out_2(5), Y12 => mcm_out_2(4), Y13 => mcm_out_2(3), Y14 => mcm_out_2(2), Y15 => mcm_out_2(1), Y16 => mcm_out_2(0));
 
-PROCESS (state) IS
+PROCESS (ref, state) IS
 BEGIN
     IF (state = '0') THEN
-        mcm_in(0) <= ref(0);
-        mcm_in(1) <= ref(1);
+        mcm_in(0) <= ref;
+        mcm_in(1) <= opposite_ref;
 		
     ELSE
-        mcm_in(0) <= ref(1);
-        mcm_in(1) <= ref(0);
+        mcm_in(0) <= opposite_ref;
+        mcm_in(1) <= ref;
     END IF;
 END PROCESS;
 
@@ -86,3 +87,4 @@ BEGIN
 END PROCESS;		
 
 END comportamental;
+

@@ -9,6 +9,43 @@ path_input_modes = "./input/modes/"
 
 number_of_tests = 5
 
+p = { (0,-1) : 55,
+    (-1,32) : 185,
+    (-1,0) : 158,
+    (-1,1) : 195,
+    (-1,2) : 81,
+    (-1,3) : 161,
+    (-1,4) : 166,
+    (-1,5) : 44, 
+    (-1,6) : 130,
+    (-1,7) : 30,
+    (-1,8) : 26,
+    (-1,9) : 179,
+    (-1,10) : 187,
+    (-1,11) : 253,
+    (-1,12) : 118,
+    (-1,13) : 110,
+    (-1,14) : 29,
+    (-1,15) : 199,
+    (-1,16) : 87,
+    (-1,17) : 180,
+    (-1,18) : 133,
+    (-1,19) : 88,
+    (-1,20) : 149,
+    (-1,21) : 66,
+    (-1,22) : 38,
+    (-1,23) : 244,
+    (-1,24) : 35,
+    (-1,25) : 14,
+    (-1,26) : 2,
+    (-1,27) : 185,
+    (-1,28) : 134,
+    (-1,29) : 65,
+    (-1,30) : 61,
+    (-1,31) : 133,
+    (32,-1) : 96,
+}
+
 fc_coefficients = [[0 for col in range(4)] for row in range(32)]
 fc_coefficients[0][0] = 0
 fc_coefficients[0][1] = 64
@@ -515,6 +552,43 @@ def generate_mode_tb(mode, min_ref, max_ref, list_test, list_base, single_block_
     f.write("\n\t\t\tfile_close(file_RESULTS);\n\n\t\t\twait;\n\n\tEND PROCESS init;\n\nEND comportamental;")
     f.close()
 
+#Automated tests
+def datapath_automated_tests():
+    input = {}
+    fin = open(path_tests  + "datapath_input.vhd", "w")
+    fout = open(path_tests  + "datapath_output.vhd", "w")
+    #generate inputs
+    for n in range(-66,0):
+        input[(-1, -(n + 1))] = rm.randint(0, 255)
+        fin.write("input(" + str(n) + ") <= \"" + str(np.binary_repr(input[(-1, -(n + 1))],width=8)) + "\"; --" + str(input[(-1, -(n + 1))]) + "\n")
+
+    input[(-1, -1)] = rm.randint(0, 255)
+    fin.write("input(" + str(0) + ") <= \"" + str(np.binary_repr(input[(-1, -1)],width=8)) + "\"; --" + str(input[(-1, -1)]) + "\n")
+
+    for n in range(0,38):
+        input[(n, -1)] = rm.randint(0, 255)
+        fin.write("input(" + str(n + 1) + ") <= \"" + str(np.binary_repr(input[(n, -1)],width=8)) + "\"; --" + str(input[(n, -1)]) + "\n")
+
+    #Planar output
+    x = 0
+    nTbH = 32
+    nTbW = 32
+    predSamples = {}
+    predV = {}
+    predH = {}
+    for y in range(nTbH):
+        predV[(x,y)] = ((nTbH - 1 - y)*input[(x,-1)] + (y + 1)*input[(-1,nTbH)]) << int(mh.log2(nTbW))
+        predH[(x,y)] = ((nTbW - 1 - x)*input[(-1,y)] + (x + 1)*input[(nTbW,-1)]) << int(mh.log2(nTbH))
+        predSamples[(x,y)] = (predV[(x,y)] + predH[(x,y)] + nTbH*nTbW) >> int(mh.log2(nTbW) + mh.log2(nTbH) + 1)
+        fout.write(str(predSamples[(x,y)]) + "\n")
+
+    fin.close()
+    fout.close()
+
+    for key, value in zip(input.keys(), input.values()):
+        print(key, value)
+
+
 def random_generate_input(f, mode, angle, base, size):
     input = {}
     for n in range(base, base + size):
@@ -563,7 +637,7 @@ def clip1(value):
     
     return value
 
-def assert_equals(mode):
+def assert_equals_angular(mode):
     f_eq = open(path_tests + "test" + "_outputs_" + str(mode) + ".txt", "r")
     f_sim = open(path_tests + "output_results.txt", "r")
     test_counter = 0
@@ -599,6 +673,34 @@ def assert_equals(mode):
     print("Tests passed: " + str(test_passed) + "/" + str(test_counter))
     f_eq.close()
     f_sim.close()
+
+def assert_equals_planar(p):
+
+    x = 0
+    nTbH = 32
+    nTbW = 32
+    predSamples = {}
+    predV = {}
+    predH = {}
+    for y in range(nTbH):
+        predV[(x,y)] = ((nTbH - 1 - y)*p[(x,-1)] + (y + 1)*p[(-1,nTbH)]) << int(mh.log2(nTbW))
+        predH[(x,y)] = ((nTbW - 1 - x)*p[(-1,y)] + (x + 1)*p[(nTbW,-1)]) << int(mh.log2(nTbH))
+        predSamples[(x,y)] = (predV[(x,y)] + predH[(x,y)] + nTbH*nTbW) >> int(mh.log2(nTbW) + mh.log2(nTbH) + 1)
+
+    y = 0
+    test_counter = 0
+    f= open(path_tests + "output_results.txt", "r")
+    for line in f:
+        if(predSamples[(x,y)] == int(line, 2)):
+            test_counter += 1
+        else:
+            error = str(y) + " : " + str(predSamples[(x,y)]) + " /= " + str(int(line, 2))
+            print(error)
+        
+        y += 1
+
+    print("Tests passed: " + str(test_counter) + "/32")
+
 
 def standardize_MCM_file(f, MCM_name):
     #with open(path_input_modes + str(mode) + "/" + MCM_name + ".v") as f:

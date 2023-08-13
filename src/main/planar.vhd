@@ -8,7 +8,8 @@ USE work.mode_in_out.all;
 
 ENTITY planar IS
 	PORT (
-		ref : in ref_bus (0 to 3);
+		ref_x : in ref_bus (0 to 1);  
+		ref_y : ref_bus (0 to 16);
 		state: in std_logic;
 		output : out output_bus
 	);
@@ -16,9 +17,18 @@ END planar;
 
 ARCHITECTURE comportamental OF planar IS
 
-COMPONENT planar_eq_block IS
-    PORT (
-		ref : in ref_bus (0 to 1);
+COMPONENT predH_block IS
+	PORT (
+		ref : in ref_bus (0 to 15);
+		opposite_ref : in std_logic_vector ( 7 downto 0);
+		output : out planar_eq_out
+	);
+END COMPONENT;
+
+COMPONENT predV_block IS
+	PORT (
+		ref : in std_logic_vector ( 7 downto 0);
+		opposite_ref : in std_logic_vector ( 7 downto 0);
 		state: in std_logic;
 		output : out planar_eq_out
 	);
@@ -29,11 +39,11 @@ signal predH_out : planar_eq_out;
 
 BEGIN
 
-predV: planar_eq_block
-PORT MAP (ref => ref(0 to 1), state => state, output => predV_out);
+predV: predV_block
+PORT MAP (ref => ref_x(0), opposite_ref => ref_x(1), state => state, output => predV_out);
 
-predH: planar_eq_block
-PORT MAP (ref => ref(2 to 3), state => state, output => predH_out);
+predH: predH_block
+PORT MAP (ref => ref_y(0 to 15), opposite_ref => ref_y(16), output => predH_out);
 
 PROCESS (predV_out, predH_out) is
 

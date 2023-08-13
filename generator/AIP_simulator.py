@@ -288,7 +288,7 @@ def calculate_samples(modes, angles, size, normalize = 0):
     for i in values_ref:
         if(normalize):
             i.normalize_ref()
-            pass
+
         values_ref_array.append(i.transform_dict_to_array(lowest_id_value, highest_id_value, normalize))
         
     rows = list(range(lowest_id_value,highest_id_value + 1))

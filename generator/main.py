@@ -4,11 +4,12 @@ import os
 
 path_input_modes = "./input/modes/"
 
-option = 6
+option = 8
 modes = sim.modes3
-current_mode = 2
+current_mode = 0
 block_size = 32
 assert_equals = 1
+normalize = 1
 
 def main(modes, current_mode, lenght = 16, height = 1, control = -1):
     
@@ -17,7 +18,7 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
     if(control == 0):
         sim.calculate_equations(modes, angles, block_size)
     elif(control == 1):
-        sim.calculate_samples(modes, angles, block_size)
+        sim.calculate_samples(modes, angles, block_size, normalize=normalize)
     elif(control == 2):
         sim.calculate_iidx_ifact(modes, angles, block_size)
     elif(control == 3):#Generate states_ifact_mode_lenght and states_iidx_mode_lenght files of input modes and lenght 
@@ -31,7 +32,10 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
         sim.calculate_adders(modes,list_position_MCM, list_coefficients_MCM, block_size, write_file = 1)
     elif(control == 6):
         if(assert_equals):
-            gen.assert_equals(current_mode)
+            if(current_mode == 0):
+                gen.assert_equals_planar(gen.p)
+            else:
+                gen.assert_equals_angular(current_mode)
         else:
             
             df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, lenght)
@@ -49,9 +53,11 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
 
             with open(path_input_modes + str(current_mode) + "/" + file, "w") as f:
                 f.write(contents)
+    elif(control == 8):
+        gen.datapath_automated_tests()
 
     else:
-        print("Select a value for control between 0 and 7")
+        print("Select a value for control between 0 and 8")
     
 
 if __name__ == "__main__":
