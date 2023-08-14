@@ -10,17 +10,29 @@ ENTITY datapath IS
 	PORT (
 		input : IN ref_bus (-66 to 38 );
 		state : IN std_logic;
-		base : IN std_logic_vector ( 4 downto 0 );
+		base : IN integer;
 		clk : IN std_logic;
-		rst	: IN std_logic
+		rst	: IN std_logic;
+		wrt : IN std_logic;
+		mode_0_out: OUT output_bus
 	);
 END datapath;
 
 ARCHITECTURE comportamental OF datapath IS
 
-COMPONENT registrador_8bits_com_reset IS
+COMPONENT input_register IS
 PORT (
-	clk			: IN std_logic; -- clock (relogio)
+	clk			: IN std_logic; -- clock
+	rst			: IN std_logic; -- reset
+	wrt			: IN std_logic;	-- write
+	d			: IN std_logic_vector(7 downto 0);
+	q			: OUT std_logic_vector(7 downto 0)
+);
+END COMPONENT;
+
+COMPONENT output_register IS
+PORT (
+	clk			: IN std_logic; -- clock
 	rst			: IN std_logic; -- reset
 	d			: IN std_logic_vector(7 downto 0);
 	q			: OUT std_logic_vector(7 downto 0)
@@ -30,8 +42,11 @@ END COMPONENT;
 COMPONENT planar
 	PORT ( 
 		ref_x : in ref_bus (0 to 1);  
-		ref_y : in ref_bus (0 to 16);
+		ref_y : ref_bus (0 to 16);
 		state: in std_logic;
+		base : IN integer;
+		clk : IN std_logic;
+		rst	: IN std_logic;
 		output : out output_bus
 	);
 END COMPONENT;
@@ -165,27 +180,34 @@ SIGNAL ref_in_bus : ref_bus (-66 to 38);
 SIGNAL planar_bus_x : ref_bus (0 to 1);
 SIGNAL planar_bus_y : ref_bus (0 to 16);
 SIGNAL planar_bus_out : output_bus;
+SIGNAL dc_bus_out : output_bus;
 
 BEGIN
 
 input_reg_gen: 
 FOR i IN -66 to 38 GENERATE
-	ref_reg : registrador_8bits_com_reset 
-	PORT MAP (clk => clk, rst => rst, d => input(i), q => ref_in_bus(i));
+	ref_reg : input_register 
+	PORT MAP (clk => clk, rst => rst, wrt => wrt, d => input(i), q => ref_in_bus(i));
 END GENERATE input_reg_gen;
 	
 planar_reg_gen: 
 FOR i IN 0 TO 15 GENERATE
-	planar_reg : registrador_8bits_com_reset 
-	PORT MAP (clk => clk, rst => rst, d => planar_bus_out(i));
+	planar_reg : output_register
+	PORT MAP (clk => clk, rst => rst, d => planar_bus_out(i), q => mode_0_out(i));
 END GENERATE planar_reg_gen;
 
+dc_reg_gen: 
+FOR i IN 0 TO 15 GENERATE
+	dc_reg : output_register
+	PORT MAP (clk => clk, rst => rst, d => dc_bus_out(i));
+END GENERATE dc_reg_gen;
+
 planar_block: planar
-PORT MAP (ref_x => planar_bus_x, ref_y => planar_bus_y, state => state, output => planar_bus_out);
+PORT MAP (ref_x => planar_bus_x, ref_y => planar_bus_y, base => base, state => state, clk => clk, rst => rst, output => planar_bus_out);
 
 PROCESS (state) is
 	BEGIN
-		planar_bus_x(0) <= ref_in_bus(1);
+		planar_bus_x(0) <= ref_in_bus(base + 1);
 		planar_bus_x(1) <= ref_in_bus(-33);
 		FOR i IN 0 to 15 LOOP
 			IF(state = '0') THEN

@@ -33,7 +33,7 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
     elif(control == 6):
         if(assert_equals):
             if(current_mode == 0):
-                gen.assert_equals_planar(gen.p)
+                gen.assert_equals_planar(gen.p, 2)
             else:
                 gen.assert_equals_angular(current_mode)
         else:
@@ -54,7 +54,12 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
             with open(path_input_modes + str(current_mode) + "/" + file, "w") as f:
                 f.write(contents)
     elif(control == 8):
-        gen.datapath_automated_tests()
+        if(assert_equals):
+            input = gen.datapath_automated_tests()
+            gen.assert_equals_planar(input, 32)
+            gen.datapath_automated_tests()
+        else:
+            gen.datapath_automated_tests()
 
     else:
         print("Select a value for control between 0 and 8")

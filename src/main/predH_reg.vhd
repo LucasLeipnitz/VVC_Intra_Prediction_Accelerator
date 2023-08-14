@@ -1,26 +1,26 @@
 ----------------------------------------------------------
--- Registrador de 8 bits com reset assíncrono
+-- Registrador de 8 bits com reset assÃ­ncrono
 ----------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 -----------------------------------------------
-ENTITY registrador_8bits_com_reset IS
+ENTITY predH_register IS
 PORT (
-	clk			: IN std_logic; -- clock (relogio)
+	clk			: IN std_logic; -- clock
 	rst			: IN std_logic; -- reset
-	d			: IN std_logic_vector(7 downto 0);
-	q			: OUT std_logic_vector(7 downto 0)
+	d			: IN std_logic_vector ( 12 downto 0 );
+	q			: OUT std_logic_vector ( 12 downto 0 )
 );
-END registrador_8bits_com_reset;
+END predH_register;
 -----------------------------------------------
 
-ARCHITECTURE rtl OF registrador_8bits_com_reset IS
+ARCHITECTURE rtl OF predH_register IS
 BEGIN
 		PROCESS(clk,rst)
 		BEGIN
 			IF (rst = '1') THEN
-				q <= (OTHERS => '0');   --  pode ser usado também q <= "00000000";
-			ELSIF (clk'EVENT AND clk = '1') THEN
+				q <= (OTHERS => '0');
+			ELSIF (clk'EVENT) THEN
 				q <= d;
 			END IF;
 		END PROCESS;

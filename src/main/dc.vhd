@@ -49,5 +49,7 @@ BEGIN
 
 END PROCESS;
 
+END comportamental;
+
 
 END comportamental;
