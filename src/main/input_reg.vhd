@@ -1,5 +1,5 @@
 ----------------------------------------------------------
--- Registrador de 8 bits com reset assÃ­ncrono
+-- Registrador de 8 bits com reset assíncrono
 ----------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;

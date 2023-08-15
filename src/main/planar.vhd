@@ -64,4 +64,3 @@ variable sum : std_logic_vector (18 downto 0);
 END PROCESS;
 
 END comportamental;
-
