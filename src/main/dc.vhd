@@ -8,48 +8,45 @@ USE work.mode_in_out.all;
 
 ENTITY dc IS
 	PORT (
-		ref : in ref_bus (0 to 15);
+		ref : in std_logic_vector ( 7 downto 0);
 		state: in std_logic;
-		output : out output_bus_dc
+		base: in integer;
+		clk: in  std_logic;
+		rst_sum_buffer: in std_logic;
+		output : out std_logic_vector ( 7 downto 0)
 	);
 END dc;
 
 ARCHITECTURE comportamental OF dc IS
 
-SIGNAL sum_buffer : integer := 0;
-SIGNAL sum_signal : std_logic_vector ( 13 downto 0);
+COMPONENT sum_register IS
+PORT (
+	clk			: IN std_logic; -- clock
+	rst			: IN std_logic; -- reset
+	d			: IN std_logic_vector ( 13 downto 0);
+	q			: OUT std_logic_vector ( 13 downto 0)
+);
+END COMPONENT;
 
-BEGIN 
 
-PROCESS (ref)	IS
-	VARIABLE sum : integer;
+SIGNAL sum_buffer_in : std_logic_vector ( 13 downto 0);
+SIGNAL sum_buffer_out : std_logic_vector ( 13 downto 0);
+
 BEGIN
 	
-	sum := 0;
-    FOR i IN 0 to 15 LOOP
-        sum := sum + to_integer(unsigned(ref(i)));
-    END LOOP;
-	
-	sum_signal <= std_logic_vector(to_unsigned(sum + sum_buffer + 16, 14));
+sum_buffer : sum_register
+PORT MAP (clk => clk, rst => rst_sum_buffer, d => sum_buffer_in, q => sum_buffer_out);
 
-END PROCESS;
-
-PROCESS (sum_signal, state)	IS
+PROCESS (ref, clk)	IS
+	VARIABLE value : std_logic_vector ( 13 downto 0);
+	VARIABLE average : std_logic_vector ( 13 downto 0);
 BEGIN
 	
-	IF(state = '0') THEN
-		sum_buffer <=  to_integer(unsigned(sum_signal));
-	ELSE
-		sum_buffer <= 0;
-	END IF;
-	
-	FOR i IN 0 to 31 LOOP
-		output(i) <= sum_signal(13 downto 6);
-	END LOOP;
+	value := "000000" & ref;
+	sum_buffer_in <= value + sum_buffer_out;
+	average := value + sum_buffer_out + "00000000100000"; -- + 32
+	output <= average(13 downto 6);	-- >> 6
 
 END PROCESS;
-
-END comportamental;
-
 
 END comportamental;

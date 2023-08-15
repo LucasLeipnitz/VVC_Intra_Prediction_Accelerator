@@ -680,7 +680,7 @@ def assert_equals_planar(p, x_input):
     test_counter = 0
     y = 0
     x = 0
-    f = open(path_tests + "output_results.txt", "r")
+    f = open(path_tests + "output_results_planar.txt", "r")
     for line in f:
         if(predSamples[(x,y)] == int(line, 2)):
             test_counter += 1
@@ -693,7 +693,27 @@ def assert_equals_planar(p, x_input):
             y = 0
             x += 1
 
-    print("Tests passed: " + str(test_counter) + "/" + str(32*x_input))
+    print("Planar Tests passed: " + str(test_counter) + "/" + str(32*x_input))
+
+def assert_equals_dc(p, result):
+
+    nTbH = 32
+    nTbW = 32
+    x_sum = 0
+    for x in range(nTbW):
+        x_sum += p[(x,-1)]
+
+    y_sum = 0
+    for y in range(nTbH):
+        y_sum += p[(-1,y)]
+
+    sum = (x_sum + y_sum + 32) >> 6
+    
+    if(result == sum):
+        print("DC Test Passed")
+    else:
+        print("DC Test Failed: " + str(sum) + " != " + str(result) + "\n")
+            
 
 
 def standardize_MCM_file(f, MCM_name):

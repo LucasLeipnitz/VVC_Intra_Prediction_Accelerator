@@ -17,10 +17,12 @@ SIGNAL input : ref_bus (-66 to 38 );
 SIGNAL state : std_logic;
 SIGNAL clk : std_logic;
 SIGNAL rst : std_logic;
+SIGNAL rst_sum_buffer : std_logic;
 SIGNAL wrt : std_logic;
 SIGNAL base : integer := -1;
 SIGNAL mode_0_out: output_bus;
-FILE file_RESULTS : text;
+SIGNAL mode_1_out: std_logic_vector(7 downto 0);
+FILE file_planar : text;
 CONSTANT c_WIDTH : natural := 4;
 
 
@@ -31,24 +33,31 @@ COMPONENT datapath IS
 		base : IN integer;
 		clk : IN std_logic;
 		rst	: IN std_logic;
+		rst_sum_buffer: IN std_logic;
 		wrt : IN std_logic;
-		mode_0_out: OUT output_bus
+		mode_0_out: OUT output_bus;
+		mode_1_out: OUT std_logic_vector(7 downto 0)
 	);
 END COMPONENT;
 
 BEGIN
 	
 	i1 : datapath
-    PORT MAP (input => input, state => state, wrt => wrt, clk => clk, base => base, rst => rst, mode_0_out => mode_0_out);
-	file_open(file_RESULTS, "output_results.txt", write_mode);
+    PORT MAP (input => input, state => state, wrt => wrt, clk => clk, base => base, rst => rst, rst_sum_buffer => rst_sum_buffer, mode_0_out => mode_0_out, mode_1_out => mode_1_out);
+	file_open(file_planar, "output_results_planar.txt", write_mode);
 	init : PROCESS
 		VARIABLE v_OLINE  : line;
 		VARIABLE row  : line;
-		VARIABLE next_clk : integer;
+		VARIABLE next_state : integer;
 		VARIABLE wrt_file : boolean;
 	
     BEGIN
-	 
+	    clk <= '1';
+		rst <= '1';
+		wait for 5 ns;
+		clk <= '0';
+		rst <= '0';
+		wait for 5 ns;
 		clk <= '1';
 		wrt <= '1';
 		input(-66) <= "00001110"; --14
@@ -158,28 +167,34 @@ BEGIN
 		input(38) <= "00011110"; --30
 		
 		wait for 5 ns;
+		clk <= '0';
 		wrt <= '0';
-		next_clk := 0;
+		rst <= '0';
+		
+		wait for 5 ns;
+		next_state := 0;
+		rst_sum_buffer <= '1';
 		wrt_file := false;
 		
 		WHILE base /= 32 LOOP
-			IF next_clk = 0 THEN
-				next_clk := 1;
-				clk <= '0';
-				state <= '0';
+			clk <= '1';
+			IF next_state = 0 THEN
 				base <= base + 1;
+				next_state := 1;
+				state <= '0';
 			ELSE 
-				next_clk := 0;
-				clk <= '1';
+				next_state := 0;
 				state <= '1';
 			END IF;
 			
 			wait for 5 ns;
+			clk <= '0';
+			rst_sum_buffer <= '0';
 			
 			if(wrt_file = true) THEN
 				FOR i IN 0 TO 15 LOOP
 		            write(v_OLINE, mode_0_out(i), right, c_WIDTH);
-		            writeline(file_RESULTS, v_OLINE);
+		            writeline(file_planar, v_OLINE);
 	        	END LOOP;
 			ELSE
 				wrt_file := true;
@@ -189,8 +204,10 @@ BEGIN
 			
 		END LOOP;
 		
-		wait;
+		file_close(file_planar);
 		
+		wait;
+	
 	END PROCESS init;
 
 END comportamental;

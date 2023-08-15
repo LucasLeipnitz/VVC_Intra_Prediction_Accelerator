@@ -57,7 +57,7 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
         if(assert_equals):
             input = gen.datapath_automated_tests()
             gen.assert_equals_planar(input, 32)
-            gen.datapath_automated_tests()
+            gen.assert_equals_dc(input, 135)
         else:
             gen.datapath_automated_tests()
 
