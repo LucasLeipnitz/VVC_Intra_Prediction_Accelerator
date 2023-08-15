@@ -15,8 +15,9 @@ ENTITY datapath IS
 		rst	: IN std_logic;
 		rst_sum_buffer: IN std_logic;
 		wrt : IN std_logic;
-		mode_0_out: OUT output_bus;
-		mode_1_out: OUT std_logic_vector(7 downto 0)
+		mode0_out: OUT output_bus;
+		mode1_out: OUT std_logic_vector(7 downto 0);
+		mode2_out: OUT output_bus
 	);
 END datapath;
 
@@ -181,12 +182,13 @@ COMPONENT mode_54
 END COMPONENT;
 
 SIGNAL ref_in_bus : ref_bus (-66 to 38);
-
 SIGNAL planar_bus_x : ref_bus (0 to 1);
 SIGNAL planar_bus_y : ref_bus (0 to 16);
 SIGNAL planar_bus_out : output_bus;
-SIGNAL dc_bus_out : std_logic_vector ( 7 downto 0);	
 SIGNAL dc_bus_in : std_logic_vector ( 7 downto 0);
+SIGNAL dc_bus_out : std_logic_vector ( 7 downto 0);	
+SIGNAL mode2_bus_in : ref_bus (1 to 18);
+SIGNAL mode2_bus_out : output_bus;
 
 BEGIN
 
@@ -199,11 +201,17 @@ END GENERATE input_reg_gen;
 planar_reg_gen: 
 FOR i IN 0 TO 15 GENERATE
 	planar_reg : output_register
-	PORT MAP (clk => clk, rst => rst, d => planar_bus_out(i), q => mode_0_out(i));
+	PORT MAP (clk => clk, rst => rst, d => planar_bus_out(i), q => mode0_out(i));
 END GENERATE planar_reg_gen;
  
 dc_reg : output_register
-PORT MAP (clk => clk, rst => rst, d => dc_bus_out, q => mode_1_out);
+PORT MAP (clk => clk, rst => rst, d => dc_bus_out, q => mode1_out);
+
+mode2_reg_gen: 
+FOR i IN 0 TO 15 GENERATE
+	mode2_reg : output_register
+	PORT MAP (clk => clk, rst => rst, d => mode2_bus_out(i), q => mode2_out(i));
+END GENERATE mode2_reg_gen;
 
 planar_block: planar
 PORT MAP (ref_x => planar_bus_x, ref_y => planar_bus_y, base => base, state => state, clk => clk, rst => rst, output => planar_bus_out);
@@ -211,8 +219,13 @@ PORT MAP (ref_x => planar_bus_x, ref_y => planar_bus_y, base => base, state => s
 dc_block : dc
 PORT MAP (ref => dc_bus_in, state => state, base => base, clk => clk, rst_sum_buffer => rst_sum_buffer, output => dc_bus_out);
 
+mode2_block : mode_2
+PORT MAP (ref => mode2_bus_in, output => mode2_bus_out);
+
 PROCESS (state) is
 	BEGIN
+	
+		--Planar reference mapping
 		planar_bus_x(0) <= ref_in_bus(base + 1);
 		planar_bus_x(1) <= ref_in_bus(-33);
 		FOR i IN 0 to 15 LOOP
@@ -224,11 +237,21 @@ PROCESS (state) is
 		END LOOP;
 		planar_bus_y(16) <= ref_in_bus(33);
 		
+		--DC reference mapping
 		IF(state = '0') THEN
 			dc_bus_in <= ref_in_bus(base + 1);
 		ELSE
 			dc_bus_in <= ref_in_bus(0 - (base + 1));
 		END IF;
+		
+		--Mode 2 reference mapping
+		FOR i IN 1 to 18 LOOP
+			IF(state = '0') THEN
+				mode2_bus_in(i) <= ref_in_bus(0 - (base + i));
+			ELSE
+				mode2_bus_in(i) <= ref_in_bus(0 - (base + 16 + i));
+			END IF;
+		END LOOP;		
 END PROCESS;
 
 END comportamental;

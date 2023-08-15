@@ -30,21 +30,14 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
         df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, lenght)        
         list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size, lenght)
         sim.calculate_adders(modes,list_position_MCM, list_coefficients_MCM, block_size, write_file = 1)
-    elif(control == 6):
-        if(assert_equals):
-            if(current_mode == 0):
-                gen.assert_equals_planar(gen.p, 2)
-            else:
-                gen.assert_equals_angular(current_mode)
-        else:
-            
-            df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, lenght)
+    elif(control == 6):      
+        df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, lenght)
 
-            list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size, lenght)
+        list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size, lenght)
 
-            list_of_modes_adders = sim.calculate_adders(modes,list_position_MCM, list_coefficients_MCM, block_size)
-            for mode, angle, list_of_modes_adders, list_coefficients_MCM  in zip(modes, angles, list_of_modes_adders, list_coefficients_MCM):
-                gen.generate_mode(mode, angle, list_of_modes_adders, list_coefficients_MCM, block_size)
+        list_of_modes_adders = sim.calculate_adders(modes,list_position_MCM, list_coefficients_MCM, block_size)
+        for mode, angle, list_of_modes_adders, list_coefficients_MCM  in zip(modes, angles, list_of_modes_adders, list_coefficients_MCM):
+            gen.generate_mode(mode, angle, list_of_modes_adders, list_coefficients_MCM, block_size)
     elif(control == 7):
         for file in os.listdir(path_input_modes + str(current_mode)):
             MCM_name = file[:-2]
@@ -55,11 +48,14 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
                 f.write(contents)
     elif(control == 8):
         if(assert_equals):
-            input = gen.datapath_automated_tests()
-            gen.assert_equals_planar(input, 32)
-            gen.assert_equals_dc(input, 135)
+            input = gen.datapath_automated_tests(196)
+            #gen.assert_equals_planar(input, 32)
+            #gen.assert_equals_dc(input, 135)
+            mode = 2
+            angle = 32
+            gen.assert_equals_angular(input, mode, angle, block_size)
         else:
-            gen.datapath_automated_tests()
+            gen.datapath_automated_tests(196)
 
     else:
         print("Select a value for control between 0 and 8")

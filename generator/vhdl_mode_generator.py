@@ -2,6 +2,8 @@ import numpy as np
 import random as rm
 import math as mh
 import pandas as pd
+import transform_block as tb
+import re
 
 path_modes = "./output/modes/"
 path_tests = "./output/tests/"
@@ -602,9 +604,9 @@ def clip1(value):
     
     return value
 
-def datapath_automated_tests():
+def datapath_automated_tests(seed):
     input = {}
-    rm.seed(196) #set seed so that input has the same values for all tests
+    rm.seed(seed) #set seed so that input has the same values for all tests
     fin = open(path_tests  + "datapath_input.vhd", "w")
     #generate inputs
     for n in range(-66,0):
@@ -625,42 +627,56 @@ def datapath_automated_tests():
     
     return input
 
-def assert_equals_angular(mode):
-    f_eq = open(path_tests + "test" + "_outputs_" + str(mode) + ".txt", "r")
-    f_sim = open(path_tests + "output_results.txt", "r")
-    test_counter = 0
-    output_counter = 0
-    equal_counter = 0
-    test_passed = 0
-    first_line = 1
-    line_counter = 0
-    for line_eq, line_sim in zip(f_eq, f_sim):
-        line_counter += 1
-        if("Test" in line_eq):
-            test_counter += 1
-            if((output_counter == equal_counter) and not first_line):
-                test_passed += 1
-            
-            output_counter = 0
-            equal_counter = 0
-            first_line = 0
-        else:
-            if("State" in line_eq):
-                pass
-            else:
-                output_counter += 1   
-                if(int(line_eq) == int(line_sim, 2)):
-                    equal_counter += 1
-                else:
-                    error = str(line_counter) + " : " + str(int(line_eq)) + " /= " + str(int(line_sim, 2))
-                    print(error)
+def map_pixel_to_reference(input_pixels, mode_tb):
+    ref = {}
+    for key, value in zip(mode_tb.ref.keys(),mode_tb.ref.values()):
+        x,y = re.findall(r'-?\d+', value) #Get x and y value from string
+        ref[key] = input_pixels[(int(x),int(y))]
     
-    if(output_counter == equal_counter):
-        test_passed += 1
+    return ref
 
-    print("Tests passed: " + str(test_passed) + "/" + str(test_counter))
-    f_eq.close()
-    f_sim.close()
+def assert_equals_angular(p, mode, angle, block_size):
+    test_counter = 0
+    test_passed = 0
+    nTbH = block_size
+    nTbW = block_size
+    predSamples = {}
+    
+    mode_tb = tb.TransformBlock(block_size, block_size, i, j, 0, block_size*2 + 2, block_size*2 + 2, 0)
+    mode_tb.calculate_pred_values()
+    ref = map_pixel_to_reference(p, mode_tb)
+    #Find if mode uses fC or fG coefficients
+    nTbS = int(mh.log2(block_size) + mh.log2(block_size)) >> 1
+    minDistVerHor = min(abs(mode - 50), abs(mode - 18))
+    if(minDistVerHor > intraHorVerDistThres[nTbS]):
+        filterFlag = 1
+    else:
+        filterFlag = 0
+
+    for x in range(nTbW):
+        for y in range(nTbH):
+            iIdx = ((y+1)*angle)>>5
+            iFact = ((y+1)*angle)&31
+            predSamples[(x,y)] = calculate_pred_y(ref, x, iIdx, iFact, filterFlag)
+
+    test_counter = 0
+    y = 0
+    x = 0
+    f = open(path_tests + "output_results_angular.txt", "r")
+    for line in f:
+        if(predSamples[(x,y)] == int(line, 2)):
+            test_counter += 1
+        else:
+            error = str(x) + ", " + str(y) + " : " + str(predSamples[(x,y)]) + " /= " + str(int(line, 2))
+            print(error)
+             
+        y += 1
+        if(y == 32):
+            y = 0
+            x += 1
+
+    print("Tests passed: " + str(test_counter) + "/" + str(32*block_size))
+    f.close()
 
 def assert_equals_planar(p, x_input):
 
@@ -694,6 +710,7 @@ def assert_equals_planar(p, x_input):
             x += 1
 
     print("Planar Tests passed: " + str(test_counter) + "/" + str(32*x_input))
+    f.close()
 
 def assert_equals_dc(p, result):
 

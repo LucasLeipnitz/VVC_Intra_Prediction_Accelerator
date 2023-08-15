@@ -20,9 +20,11 @@ SIGNAL rst : std_logic;
 SIGNAL rst_sum_buffer : std_logic;
 SIGNAL wrt : std_logic;
 SIGNAL base : integer := -1;
-SIGNAL mode_0_out: output_bus;
-SIGNAL mode_1_out: std_logic_vector(7 downto 0);
+SIGNAL mode0_out: output_bus;
+SIGNAL mode1_out: std_logic_vector(7 downto 0);
+SIGNAL mode2_out: output_bus;
 FILE file_planar : text;
+FILE file_mode2 : text;
 CONSTANT c_WIDTH : natural := 4;
 
 
@@ -35,18 +37,21 @@ COMPONENT datapath IS
 		rst	: IN std_logic;
 		rst_sum_buffer: IN std_logic;
 		wrt : IN std_logic;
-		mode_0_out: OUT output_bus;
-		mode_1_out: OUT std_logic_vector(7 downto 0)
+		mode0_out: OUT output_bus;
+		mode1_out: OUT std_logic_vector(7 downto 0);
+		mode2_out: OUT output_bus
 	);
 END COMPONENT;
 
 BEGIN
 	
 	i1 : datapath
-    PORT MAP (input => input, state => state, wrt => wrt, clk => clk, base => base, rst => rst, rst_sum_buffer => rst_sum_buffer, mode_0_out => mode_0_out, mode_1_out => mode_1_out);
+    PORT MAP (input => input, state => state, wrt => wrt, clk => clk, base => base, rst => rst, rst_sum_buffer => rst_sum_buffer, mode0_out => mode0_out, mode1_out => mode1_out, mode2_out => mode2_out);
 	file_open(file_planar, "output_results_planar.txt", write_mode);
+	file_open(file_mode2, "output_results_mode2.txt", write_mode);
 	init : PROCESS
-		VARIABLE v_OLINE  : line;
+		VARIABLE planar_line  : line;
+		VARIABLE mode2_line  : line;
 		VARIABLE row  : line;
 		VARIABLE next_state : integer;
 		VARIABLE wrt_file : boolean;
@@ -191,10 +196,12 @@ BEGIN
 			clk <= '0';
 			rst_sum_buffer <= '0';
 			
-			if(wrt_file = true) THEN
+			IF(wrt_file = true) THEN
 				FOR i IN 0 TO 15 LOOP
-		            write(v_OLINE, mode_0_out(i), right, c_WIDTH);
-		            writeline(file_planar, v_OLINE);
+		            write(planar_line, mode0_out(i), right, c_WIDTH);
+					write(mode2_line, mode2_out(i), right, c_WIDTH);
+		            writeline(file_planar, planar_line);
+					writeline(file_mode2, mode2_line);
 	        	END LOOP;
 			ELSE
 				wrt_file := true;
@@ -205,9 +212,11 @@ BEGIN
 		END LOOP;
 		
 		file_close(file_planar);
+		file_close(file_mode2);
 		
 		wait;
 	
 	END PROCESS init;
 
 END comportamental;
+

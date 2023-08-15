@@ -37,7 +37,7 @@ BEGIN
 sum_buffer : sum_register
 PORT MAP (clk => clk, rst => rst_sum_buffer, d => sum_buffer_in, q => sum_buffer_out);
 
-PROCESS (ref, clk)	IS
+PROCESS (ref, state)	IS
 	VARIABLE value : std_logic_vector ( 13 downto 0);
 	VARIABLE average : std_logic_vector ( 13 downto 0);
 BEGIN

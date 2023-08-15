@@ -20,10 +20,10 @@ BEGIN
 		BEGIN
 			IF (rst = '1') THEN
 				q <= (OTHERS => '0');
-			ELSIF (clk'EVENT AND clk = '1') THEN
+			ELSIF (clk'EVENT AND clk = '0') THEN
 				q <= d;
 			END IF;
 		END PROCESS;
 	
 END rtl;
------------------------------------------------
+---------------------------------------------
