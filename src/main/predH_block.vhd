@@ -10,7 +10,7 @@ ENTITY predH_block IS
 	PORT (
 		ref : in ref_bus (0 to 15);
 		opposite_ref : in std_logic_vector ( 7 downto 0);
-		base: in integer;
+		base: in std_logic_vector(4 downto 0);
 		state: in std_logic;
 		clk: in std_logic;
 		rst: in std_logic;
@@ -49,7 +49,7 @@ PROCESS (ref, state) IS
 	variable product_opposite : std_logic_vector ( 12 downto 0);
 
 BEGIN	
-	IF(base = 0) THEN
+	IF(base = "00000") THEN
 		product_opposite := "00000" & opposite_ref;
 		FOR i IN 0 to 15 LOOP
 			product := (ref(i) & "00000") - ("00000" & ref(i));

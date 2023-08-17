@@ -1,20 +1,20 @@
 ----------------------------------------------------------
--- Registrador de 8 bits com reset assÃ­ncrono
+-- Registrador de 8 bits com reset assíncrono
 ----------------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 -----------------------------------------------
-ENTITY state_register IS
+ENTITY setup_register IS
 PORT (
 	clk			: IN std_logic; -- clock
 	rst			: IN std_logic; -- reset
 	d			: IN std_logic;
 	q			: OUT std_logic
 );
-END state_register;
+END setup_register;
 -----------------------------------------------
 
-ARCHITECTURE rtl OF state_register IS
+ARCHITECTURE rtl OF setup_register IS
 BEGIN
 		PROCESS(clk,rst)
 		BEGIN

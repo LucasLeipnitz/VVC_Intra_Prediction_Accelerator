@@ -380,7 +380,7 @@ PORT MAP ( X => ref(16), Y1 => input(118), Y2 => input(119), Y3 => input(120) );
 m34 : MCM_3_b2_17
 PORT MAP ( X => ref(17), Y1 => input(121), Y2 => input(122) );
 
-PROCESS (state) is
+PROCESS (ref, state) is
 BEGIN
 	IF (state = '0') THEN
 		eq_input(0)(0) <= input(0);

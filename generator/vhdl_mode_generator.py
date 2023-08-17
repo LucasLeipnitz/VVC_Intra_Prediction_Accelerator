@@ -604,19 +604,19 @@ def clip1(value):
     
     return value
 
-def datapath_automated_tests(seed):
+def automated_tests(seed, lower_limit, upper_limit):
     input = {}
     rm.seed(seed) #set seed so that input has the same values for all tests
-    fin = open(path_tests  + "datapath_input.vhd", "w")
+    fin = open(path_tests  + "main_input.vhd", "w")
     #generate inputs
-    for n in range(-66,0):
+    for n in range(lower_limit,0):
         input[(-1, -(n + 1))] = rm.randint(0, 255)
         fin.write("input(" + str(n) + ") <= \"" + str(np.binary_repr(input[(-1, -(n + 1))],width=8)) + "\"; --" + str(input[(-1, -(n + 1))]) + "\n")
 
     input[(-1, -1)] = rm.randint(0, 255)
     fin.write("input(" + str(0) + ") <= \"" + str(np.binary_repr(input[(-1, -1)],width=8)) + "\"; --" + str(input[(-1, -1)]) + "\n")
 
-    for n in range(0,38):
+    for n in range(0, upper_limit):
         input[(n, -1)] = rm.randint(0, 255)
         fin.write("input(" + str(n + 1) + ") <= \"" + str(np.binary_repr(input[(n, -1)],width=8)) + "\"; --" + str(input[(n, -1)]) + "\n")
 
@@ -627,24 +627,31 @@ def datapath_automated_tests(seed):
     
     return input
 
-def map_pixel_to_reference(input_pixels, mode_tb):
+def map_pixel_to_reference(input_pixels, mode_tb, lower_limit, upper_limit):
     ref = {}
-    for key, value in zip(mode_tb.ref.keys(),mode_tb.ref.values()):
+    for key, value in zip(mode_tb.ref.keys(),mode_tb.ref.values()):   
+        if(mode_tb.predModeIntra < 34):
+            if(key <= (lower_limit + 1)):
+                break
+        else:
+            if(key >= (upper_limit + 1)):
+                break
+
         x,y = re.findall(r'-?\d+', value) #Get x and y value from string
         ref[key] = input_pixels[(int(x),int(y))]
     
     return ref
 
-def assert_equals_angular(p, mode, angle, block_size):
+def assert_equals_angular(p, mode, angle, block_size, lower_limit, upper_limit):
     test_counter = 0
-    test_passed = 0
     nTbH = block_size
     nTbW = block_size
     predSamples = {}
     
-    mode_tb = tb.TransformBlock(block_size, block_size, i, j, 0, block_size*2 + 2, block_size*2 + 2, 0)
+    mode_tb = tb.TransformBlock(block_size, block_size, mode, angle, 0, block_size*2 + 2, block_size*2 + 2, 0)
     mode_tb.calculate_pred_values()
-    ref = map_pixel_to_reference(p, mode_tb)
+
+    ref = map_pixel_to_reference(p, mode_tb, lower_limit, upper_limit)
     #Find if mode uses fC or fG coefficients
     nTbS = int(mh.log2(block_size) + mh.log2(block_size)) >> 1
     minDistVerHor = min(abs(mode - 50), abs(mode - 18))
@@ -652,6 +659,9 @@ def assert_equals_angular(p, mode, angle, block_size):
         filterFlag = 1
     else:
         filterFlag = 0
+
+    '''for key, value in zip(ref.keys(),ref.values()):
+        print(key, value)'''
 
     for x in range(nTbW):
         for y in range(nTbH):
@@ -662,7 +672,7 @@ def assert_equals_angular(p, mode, angle, block_size):
     test_counter = 0
     y = 0
     x = 0
-    f = open(path_tests + "output_results_angular.txt", "r")
+    f = open(path_tests + "output_results_mode" + str(mode) + ".txt", "r")
     for line in f:
         if(predSamples[(x,y)] == int(line, 2)):
             test_counter += 1
@@ -675,7 +685,7 @@ def assert_equals_angular(p, mode, angle, block_size):
             y = 0
             x += 1
 
-    print("Tests passed: " + str(test_counter) + "/" + str(32*block_size))
+    print("Mode " + str(mode) + " > Correct Values : " + str(test_counter) + "/" + str(32*block_size))
     f.close()
 
 def assert_equals_planar(p, x_input):
@@ -709,13 +719,13 @@ def assert_equals_planar(p, x_input):
             y = 0
             x += 1
 
-    print("Planar Tests passed: " + str(test_counter) + "/" + str(32*x_input))
+    print("Planar Correct Values : " + str(test_counter) + "/" + str(32*x_input))
     f.close()
 
-def assert_equals_dc(p, result):
+def assert_equals_dc(p, block_size, result):
 
-    nTbH = 32
-    nTbW = 32
+    nTbH = block_size
+    nTbW = block_size
     x_sum = 0
     for x in range(nTbW):
         x_sum += p[(x,-1)]

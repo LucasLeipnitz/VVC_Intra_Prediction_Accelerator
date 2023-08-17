@@ -48,14 +48,13 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
                 f.write(contents)
     elif(control == 8):
         if(assert_equals):
-            input = gen.datapath_automated_tests(196)
-            #gen.assert_equals_planar(input, 32)
-            #gen.assert_equals_dc(input, 135)
-            mode = 2
-            angle = 32
-            gen.assert_equals_angular(input, mode, angle, block_size)
+            input = gen.automated_tests(196, -66, 38)
+            gen.assert_equals_planar(input, 32)
+            gen.assert_equals_dc(input, 32, 135)
+            for i in range (0,16):
+                gen.assert_equals_angular(input, modes[i], angles[i], block_size, -66, 38)
         else:
-            gen.datapath_automated_tests(196)
+            gen.automated_tests(196, -66, 38)
 
     else:
         print("Select a value for control between 0 and 8")

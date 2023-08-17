@@ -12,4 +12,5 @@ package mode_in_out is
 	type planar_input is array(0 to 1) of std_logic_vector ( 12 downto 0); 
 	type planar_eq_out is array(0 to 15) of std_logic_vector ( 17 downto 0 );
 	type reg_predH is array (0 to 32) of std_logic_vector ( 12 downto 0 );
+	type main_output is array (0 to 15) of output_bus;
 end package mode_in_out;

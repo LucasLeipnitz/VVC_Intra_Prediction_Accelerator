@@ -11,7 +11,7 @@ ENTITY planar IS
 		ref_x : in ref_bus (0 to 1);  
 		ref_y : ref_bus (0 to 16);
 		state: in std_logic;
-		base : IN integer;
+		base : IN std_logic_vector(4 downto 0);
 		clk : IN std_logic;
 		rst	: IN std_logic;
 		output : out output_bus
@@ -24,7 +24,7 @@ COMPONENT predH_block IS
 	PORT (
 		ref : in ref_bus (0 to 15);
 		opposite_ref : in std_logic_vector ( 7 downto 0);
-		base: in integer;
+		base: in std_logic_vector(4 downto 0);
 		state: in std_logic;
 		clk: in std_logic;
 		rst: in std_logic;
