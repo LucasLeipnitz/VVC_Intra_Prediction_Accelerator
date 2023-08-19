@@ -11,7 +11,7 @@ PORT (
     clk : IN std_logic;
     rst	: IN std_logic;
 	start : IN std_logic;
-   input : IN ref_bus (-66 to 38 );
+    input : IN ref_bus (-66 to 38 );
 	mode0_out: OUT output_bus;
 	mode1_out: OUT std_logic_vector(7 downto 0);
 	mode_angular_out: OUT main_output
