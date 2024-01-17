@@ -1,0 +1,26 @@
+##########################################################
+
+34
+Number of Blocks: 1
+Number of Replicas: 4
+Number of References: 10
+Number of Coef Counter: 23
+Mean of coefficients per references: 2.3
+##########################################################
+
+35
+Number of Blocks: 4
+Number of Replicas: 1
+Number of References: 37
+Number of Coef Counter: 242
+Mean of coefficients per references: 6.54
+
+Number of modes with 1 block(s): 1
+Number of modes with 4 block(s): 1
+Mean of Number of Blocks: 2.5
+Mean of Number of Replicas: 2.5
+Mean of Number of References: 23.5
+Mean of Number of Coef Counter: 132.5
+Mean of coefficients per references: 4.42
+Max coefficients in a mode: 242
+Max coefficients in a reference: 13

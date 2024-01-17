@@ -4,14 +4,16 @@ import os
 
 path_input_modes = "./input/modes/"
 
-option = 8
-modes = sim.modes3
+option = 4
+modes = sim.modes5
 current_mode = 0
-block_size = 32
+block_size = 64
 assert_equals = 1
 normalize = 1
+length = 4
+height = 4
 
-def main(modes, current_mode, lenght = 16, height = 1, control = -1):
+def main(modes, current_mode, length = 4, height = 4, control = -1):
     
     angles = sim.map_modes_to_angles(modes)
 
@@ -21,19 +23,19 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
         sim.calculate_samples(modes, angles, block_size, normalize=normalize)
     elif(control == 2):
         sim.calculate_iidx_ifact(modes, angles, block_size)
-    elif(control == 3):#Generate states_ifact_mode_lenght and states_iidx_mode_lenght files of input modes and lenght 
-        sim.calculate_states(modes, angles, block_size, lenght, write_file = 1)        
-    elif(control == 4):#Generate modes_coefficients_MCM_lenght_height files of input modes, lenght, and height
-        df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, lenght)        
-        list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size, lenght, write_file = 1)
+    elif(control == 3):#Generate states_ifact_mode_length and states_iidx_mode_length files of input modes and length 
+        sim.calculate_states(modes, angles, block_size, length, write_file = 1)        
+    elif(control == 4):#Generate modes_coefficients_MCM_length_height files of input modes, length, and height
+        df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, length)        
+        list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size, length, height, write_file = 1)
     elif(control == 5):
-        df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, lenght)        
-        list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size, lenght)
+        df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, length)        
+        list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size, length)
         sim.calculate_adders(modes,list_position_MCM, list_coefficients_MCM, block_size, write_file = 1)
     elif(control == 6):      
-        df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, lenght)
+        df_iidx, df_ifact, array_states_mods_iidx, array_states_mods_ifact = sim.calculate_states(modes, angles, block_size, length)
 
-        list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size, lenght)
+        list_position_MCM, list_coefficients_MCM = sim.calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size, length)
 
         list_of_modes_adders = sim.calculate_adders(modes,list_position_MCM, list_coefficients_MCM, block_size)
         for mode, angle, list_of_modes_adders, list_coefficients_MCM  in zip(modes, angles, list_of_modes_adders, list_coefficients_MCM):
@@ -61,6 +63,6 @@ def main(modes, current_mode, lenght = 16, height = 1, control = -1):
     
 
 if __name__ == "__main__":
-    main(modes, current_mode, control = option)
+    main(modes, current_mode, length, height, control = option)
 
 

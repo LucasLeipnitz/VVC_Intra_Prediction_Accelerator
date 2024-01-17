@@ -373,6 +373,7 @@ def calculate_states(modes, angles, block_size, state_size, write_file = 0):
 def calculate_MCM_blocks(mode, state_iidx, state_ifact, base = 0, height = 1, print_values = 0):
     constants_vectors = {}
     variation = 0 #variation of state_iidx[i+1] and state_iidx[i] 
+    print(state_iidx)
     
     #Number of fases equals to the size of the block 
     for n in range(height):
@@ -450,6 +451,7 @@ def map_to_coefficients(constants_vectors, coefficients, print_values = 0):
 
 
 def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size ,state_size = 32, height = 1, write_file = 0):
+    print(height)
     list_position_MCM = []
     list_coefficients_MCM = []
     list_of_counters = {}
