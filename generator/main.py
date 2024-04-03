@@ -4,13 +4,13 @@ import os
 
 path_input_modes = "./input/modes/"
 
-option = 4
-modes = sim.modes5
+option = 3
+modes = sim.modes1
 current_mode = 0
 block_size = 64
 assert_equals = 1
 normalize = 1
-length = 4
+length = 16
 height = 4
 
 def main(modes, current_mode, length = 4, height = 4, control = -1):

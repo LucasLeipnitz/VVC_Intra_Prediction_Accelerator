@@ -4,7 +4,7 @@ import re
 from collections import defaultdict
 from transform_block import TransformBlock
 
-path = "./"
+path = "./generator/"
 path_output_metrics = path + "output/metrics/"
 path_output_blocks = path + "output/mcm_block/"
 path_output_states = path + "output/states/"
@@ -340,14 +340,6 @@ def calculate_states(modes, angles, block_size, state_size, write_file = 0):
             base = iidx
             count = count + 1
             state_ifact.append(ifact)
-            if((count + 1)%state_size == 0):
-                if(state_iidx in array_states_iidx):
-                    pass
-                else:
-                    array_states_iidx[n_state_iidx] = state_iidx
-                    n_state_iidx = n_state_iidx + 1
-                state_iidx = []
-                base_counter = 0
                 
             if((count + 1)%state_size == 0):
                 if(state_ifact in array_states_ifact):
@@ -355,7 +347,11 @@ def calculate_states(modes, angles, block_size, state_size, write_file = 0):
                 else:
                     array_states_ifact[n_state_ifact] = state_ifact
                     n_state_ifact = n_state_ifact + 1
+                    array_states_iidx[n_state_iidx] = state_iidx
+                    n_state_iidx = n_state_iidx + 1
                 state_ifact = []
+                state_iidx = []
+                base_counter = 0
                 
         array_states_mods_iidx.append(array_states_iidx)
         array_states_mods_ifact.append(array_states_ifact)
@@ -398,22 +394,26 @@ def calculate_MCM_blocks(mode, state_iidx, state_ifact, base = 0, height = 1, pr
             if(downward_index not in constants_vectors):
                 constants_vectors[downward_index] = []
             
-            constants_vectors[downward_index].append(str(state_ifact[j]) + "[0]")
+            if((str(state_ifact[j]) + "[0]") not in constants_vectors[downward_index]):
+                constants_vectors[downward_index].append(str(state_ifact[j]) + "[0]")
             
             if((downward_index + 1) not in constants_vectors):
                 constants_vectors[downward_index + 1] = []
 
-            constants_vectors[downward_index + 1].append(str(state_ifact[j]) + "[1]")
+            if((str(state_ifact[j]) + "[1]") not in constants_vectors[downward_index + 1]):
+                constants_vectors[downward_index + 1].append(str(state_ifact[j]) + "[1]")
         
             if((downward_index + 2) not in constants_vectors):
                 constants_vectors[downward_index + 2] = []
             
-            constants_vectors[downward_index + 2].append(str(state_ifact[j]) + "[2]")
+            if((str(state_ifact[j]) + "[2]") not in constants_vectors[downward_index + 2]):
+                constants_vectors[downward_index + 2].append(str(state_ifact[j]) + "[2]")
         
             if((downward_index + 3) not in constants_vectors):
                 constants_vectors[downward_index + 3] = []
             
-            constants_vectors[downward_index + 3].append(str(state_ifact[j]) + "[3]") 
+            if((str(state_ifact[j]) + "[3]") not in constants_vectors[downward_index + 3]):
+                constants_vectors[downward_index + 3].append(str(state_ifact[j]) + "[3]")
 
         base = base + 1     
 
@@ -451,7 +451,7 @@ def map_to_coefficients(constants_vectors, coefficients, print_values = 0):
 
 
 def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size ,state_size = 32, height = 1, write_file = 0):
-    print(height)
+    #print(height)
     list_position_MCM = []
     list_coefficients_MCM = []
     list_of_counters = {}
@@ -496,6 +496,7 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
 
                 MCM_blocks = calculate_MCM_blocks(mode,i,j,height = height)
                 dict_position_MCM = {}
+                #print(MCM_blocks)
                 for key, block in zip(MCM_blocks.keys(),MCM_blocks.values()):
                     if(write_file):
                         fp.write("\n" + str(key) + ": ")
