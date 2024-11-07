@@ -11,6 +11,7 @@ path_output_states = path + "output/states/"
 path_values = path + "output/values_iidx_ifact/"
 path_samples = path + "output/samples/"
 path_planar = path + "output/planar/"
+path_equations = "output/equations/"
 
 modes1 = [34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]
 modes2 = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34]
@@ -300,10 +301,43 @@ def calculate_samples(modes, angles, size, normalize = 0):
         df.to_excel(excel_writer = path_samples + "ref_" + str(size) + ".xlsx")
 
 
-def calculate_equations(modes, angles, size):
+def calculate_equations(modes, angles, size, coefficients):
     for i,j in zip(modes,angles):
         tb = TransformBlock(size, size, i, j, 0, size*2 + 2, size*2 + 2, 0)
-        tb.calculate_equations_mode()
+        equations = tb.calculate_equations_mode()
+        equations_constants = []
+        columns = []
+        line_index = 0
+        for line in equations:
+            columns.append(line_index)
+            line_index += 1
+            line_constants = []
+            for equation in line:
+                equation_constants = ""
+                for k in range(4):
+                    p, index, ref = re.findall(r'\d+', equation.split('+')[k]) #get p[index] from string containing and put it in two separately variables
+                    if(p+'['+index+']' not in ft_coefficients[coefficients]):
+                        p, index = simmetry_rule(p, index, coefficients) #transform in a value that exists in the coefficients by the simmetry rule
+                    
+                    value = ft_coefficients[coefficients][p + '[' + index + ']']
+                    equation_constants += '(' + str(value) + ')' + "ref(" + str(ref) + ') + '
+                
+                equation_constants = equation_constants[:-3]
+                line_constants.append(equation_constants)
+                
+            equations_constants.append(line_constants)
+        
+        df = pd.DataFrame(list(zip(*equations_constants)),columns = columns)
+        excel_writer = pd.ExcelWriter(path_equations + "equations_constants_" + str(i) + "_" + str(size) + "x" + str(size) + ".xlsx", engine='xlsxwriter') 
+        df.to_excel(excel_writer, sheet_name='equations', index=False, na_rep='NaN')
+        
+        # Auto-adjust columns' width
+        for column in df:
+            column_width = 70
+            col_iidx = df.columns.get_loc(column)
+            excel_writer.sheets['equations'].set_column(col_iidx, col_iidx, column_width)
+
+        excel_writer._save()   
 
 
 def calculate_states(modes, angles, block_size, state_size, write_file = 0):

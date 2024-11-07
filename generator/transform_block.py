@@ -173,7 +173,7 @@ class TransformBlock:
             excel_writer.sheets['equations'].set_column(col_iidx, col_iidx, column_width)
 
         excel_writer._save()
-        return equations
+        return self.equations
 
     '''def calculate_equation_with_reuse(self, buffer, x):
         columns.append(x)

@@ -4,10 +4,10 @@ import os
 
 path_input_modes = "./input/modes/"
 
-option = 3
-modes = sim.modes1
+option = 0
+modes = sim.modes4
 current_mode = 0
-block_size = 64
+block_size = 4
 assert_equals = 1
 normalize = 1
 length = 16
@@ -18,7 +18,7 @@ def main(modes, current_mode, length = 4, height = 4, control = -1):
     angles = sim.map_modes_to_angles(modes)
 
     if(control == 0):
-        sim.calculate_equations(modes, angles, block_size)
+        sim.calculate_equations(modes, angles, block_size, "fc")
     elif(control == 1):
         sim.calculate_samples(modes, angles, block_size, normalize=normalize)
     elif(control == 2):
