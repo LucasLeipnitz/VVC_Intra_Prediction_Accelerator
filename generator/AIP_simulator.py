@@ -4,7 +4,7 @@ import re
 from collections import defaultdict
 from transform_block import TransformBlock
 
-path = "./generator/"
+path = "./"
 path_output_metrics = path + "output/metrics/"
 path_output_blocks = path + "output/mcm_block/"
 path_output_states = path + "output/states/"
@@ -238,18 +238,27 @@ fg_coefficients = {
     "1[3]" : 0
 }
 
-ft_coefficients = {"fc": fc_coefficients, "fg": fg_coefficients}
-
+fc_heuristic = {}
+fg_heuristic = {}
+ft_coefficients = {"fc": fc_coefficients, "fg": fg_coefficients, "fc_heuristic": fc_heuristic , "fg_heuristic": fg_heuristic}
 intraHorVerDistThres = {2: 24, 3: 14, 4:2, 5:0, 6:0}
 
-def simmetry_rule(p, index, coef):
-    if(coef == "fc"):
+def simmetry_rule(p, index, coef_table):
+    if(coef_table == "fc"):
         return str(32 - int(p)), str(3 - int(index))
-    elif(coef == "fg"):
+    elif(coef_table == "fg"):
         return str(33 - int(p)), str(3 - int(index))   
     else:
-        raise Exception("Coefficient matrix unknow: " + coef)    
-
+        raise Exception("Coefficient table unknow: " + coef_table)
+    
+def get_coefficient_value(table, coefficient):
+    if(coefficient not in  ft_coefficients[table]):
+        p, index = re.findall(r'\d+', coefficient) #get p[index] from string containing and put it in two separately variables
+        p, index = simmetry_rule(p, index, table) #transform in a value that exists in the coefficients by the simmetry rule
+        return ft_coefficients[table][p + '[' + index + ']']
+    else:
+        return ft_coefficients[table][coefficient]
+    
 
 def calculate_iidx_ifact(modes, angles, size):
     values_ifact = []
@@ -315,12 +324,12 @@ def calculate_equations(modes, angles, size, coefficients):
             for equation in line:
                 equation_constants = ""
                 for k in range(4):
-                    p, index, ref = re.findall(r'\d+', equation.split('+')[k]) #get p[index] from string containing and put it in two separately variables
+                    p, index, ref = re.findall(r'-?\d+', equation.split('+')[k]) #get p[index] and ref from string containing and put it in two separately variables
                     if(p+'['+index+']' not in ft_coefficients[coefficients]):
                         p, index = simmetry_rule(p, index, coefficients) #transform in a value that exists in the coefficients by the simmetry rule
                     
                     value = ft_coefficients[coefficients][p + '[' + index + ']']
-                    equation_constants += '(' + str(value) + ')' + "ref(" + str(ref) + ') + '
+                    equation_constants += '(' + str(value) + ')*' + "ref[" + str(ref) + '] + '
                 
                 equation_constants = equation_constants[:-3]
                 line_constants.append(equation_constants)
@@ -484,8 +493,8 @@ def map_to_coefficients(constants_vectors, coefficients, print_values = 0):
     return coefficients_vectors
 
 
-def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size ,state_size = 32, height = 1, write_file = 0):
-    #print(height)
+def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, block_size ,state_size = 32, height = 1, write_file = 0, heuristic_on = False):
+
     list_position_MCM = []
     list_coefficients_MCM = []
     list_of_counters = {}
@@ -493,9 +502,14 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
     max_coef_counter_mode = -mh.inf
     max_coef_counter_ref = -mh.inf
     if(write_file):
-        fp = open(path_output_blocks + "modes_position_MCM_" + str(state_size) + "_" + str(height) + ".txt", "w")
-        fc = open(path_output_blocks + "modes_coefficients_MCM_" + str(state_size) + "_" + str(height) + ".txt", "w")
-        fm = open(path_output_metrics + "metrics_" + str(state_size) + "_" + str(height) + ".txt", "w")
+        if(heuristic_on):
+            fp = open(path_output_blocks + "modes_position_MCM_approximate_" + str(state_size) + "_" + str(height) + ".txt", "w")
+            fc = open(path_output_blocks + "modes_coefficients_MCM_approximate_" + str(state_size) + "_" + str(height) + ".txt", "w")
+            fm = open(path_output_metrics + "metrics_approximate_" + str(state_size) + "_" + str(height) + ".txt", "w")
+        else:
+            fp = open(path_output_blocks + "modes_position_MCM_" + str(state_size) + "_" + str(height) + ".txt", "w")
+            fc = open(path_output_blocks + "modes_coefficients_MCM_" + str(state_size) + "_" + str(height) + ".txt", "w")
+            fm = open(path_output_metrics + "metrics_" + str(state_size) + "_" + str(height) + ".txt", "w")
 
     metric_mean_dict = {"Mean of Number of Blocks" : 0, "Mean of Number of Replicas" : 0, "Mean of Number of References" : 0, "Mean of Number of Coef Counter" : 0, "Mean of coefficients per references" : 0}
     for mode, states_iidx, states_ifact in zip(modes, array_states_mods_iidx, array_states_mods_ifact):
@@ -513,9 +527,15 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
             filterFlag = 0
 
         if(filterFlag):
-            coefficients = "fg"
+            if(not heuristic_on):
+                coefficients = "fg"
+            else:
+                coefficients = "fg_heuristic"
         else:
-            coefficients = "fc"
+            if(not heuristic_on):
+                coefficients = "fc"
+            else:
+                coefficients = "fc_heuristic"
 
         list_of_states_position = []
         list_of_states_coefficients = []
@@ -654,7 +674,7 @@ def calculate_MCM_modes(modes, array_states_mods_iidx, array_states_mods_ifact, 
 
     return list_position_MCM, list_coefficients_MCM
 
-def calculate_adders(modes, list_position_MCM, list_coefficients_MCM, block_size, write_file = 0):
+def calculate_adders(modes, list_position_MCM, list_coefficients_MCM, block_size, write_file = 0, heuristic_on= False):
     
     if(write_file):
         fa = open(path_output_blocks + "modes_adders.txt", "w")
@@ -675,9 +695,15 @@ def calculate_adders(modes, list_position_MCM, list_coefficients_MCM, block_size
             filterFlag = 0
 
         if(filterFlag):
-            coefficients = "fg"
+            if(not heuristic_on):
+                coefficients = "fg"
+            else:
+                coefficients = "fg_heuristic"
         else:
-            coefficients = "fc"
+            if(not heuristic_on):
+                coefficients = "fc"
+            else:
+                coefficients = "fc_heuristic"
         
         matrix_of_adders = [] #is a list of list_of_adders
         block_counter = 0
@@ -784,4 +810,47 @@ def calculate_equations_planar(nTbW, nTbH):
         df.to_excel(excel_writer, sheet_name='predH', index=False, na_rep='NaN')
         excel_writer._save()
         return equations_predV
+
+def transform_coefficients(n_average, write_file):
+    for column in range(0,4):
+        for line in range(0,32,n_average):
+            average = 0
+            for element in range(0,n_average):
+                coefficient = str(line + element) + '[' + str(column) + ']'
+                average += get_coefficient_value("fc", coefficient)
+                
+            average = int(average/n_average)
+            
+            for element in range(0,n_average):
+                fc_heuristic[str(line + element) + '[' + str(column) + ']'] = average
+
+    '''print("############## fC #################")
+    for key in fc_heuristic:
+        print("%s : %s" % (key, fc_heuristic[key]))'''
+        
+    for column in range(0,4):
+        for line in range(0,32,n_average):
+            average = 0
+            for element in range(0,n_average):
+                coefficient = str(line + element) + '[' + str(column) + ']'
+                average += get_coefficient_value("fg", coefficient)
+                
+            average = int(average/n_average)
+            
+            for element in range(0,n_average):
+                fg_heuristic[str(line + element) + '[' + str(column) + ']'] = average
+    
+    '''print("############## fG #################")
+    for key in fg_heuristic:
+        print("%s : %s" % (key, fg_heuristic[key]))'''
+        
+    if(write_file):
+        for line in range(0,32):
+            index_0 = str(line) + "[" +  str(0) + "]"
+            index_1 = str(line) + "[" +  str(1) + "]"
+            index_2 = str(line) + "[" +  str(2) + "]"
+            index_3 = str(line) + "[" +  str(3) + "]"
+            print(index_0, fg_heuristic[index_0], get_coefficient_value("fg",index_0),index_1, fg_heuristic[index_1], get_coefficient_value("fg",index_1),index_2, fg_heuristic[index_2], get_coefficient_value("fg",index_2),index_3, fg_heuristic[index_3], get_coefficient_value("fg",index_3))
+
+            
 
