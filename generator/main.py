@@ -4,7 +4,7 @@ import os
 
 path_input_modes = "./input/modes/"
 
-option = 4
+option = 0
 modes = sim.modes4
 current_mode = 0
 block_size = 64
@@ -18,7 +18,7 @@ def main(modes, current_mode, length = 4, height = 4, control = -1):
     
     angles = sim.map_modes_to_angles(modes)
 
-    sim.transform_coefficients(8, True)
+    sim.transform_coefficients(8, 16, True)
 
     if(control == 0):
         sim.calculate_equations(modes, angles, block_size, "fc")

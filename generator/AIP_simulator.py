@@ -17,7 +17,7 @@ modes1 = [34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,5
 modes2 = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34]
 modes3 = [2,3,7,10,18,23,26,30,33,34,35,43,46,49,50,54]
 modes4 = [35]
-modes5 = [34,35]
+modes5 = [35, 54]
 all_modes = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]
 modes_positive = [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]
 modes_negative = [34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50]
@@ -811,17 +811,17 @@ def calculate_equations_planar(nTbW, nTbH):
         excel_writer._save()
         return equations_predV
 
-def transform_coefficients(n_average, write_file):
+def transform_coefficients(n_average_fc, n_average_fg, write_file):
     for column in range(0,4):
-        for line in range(0,32,n_average):
+        for line in range(0,32,n_average_fc):
             average = 0
-            for element in range(0,n_average):
+            for element in range(0,n_average_fc):
                 coefficient = str(line + element) + '[' + str(column) + ']'
                 average += get_coefficient_value("fc", coefficient)
                 
-            average = int(average/n_average)
+            average = int(average/n_average_fc)
             
-            for element in range(0,n_average):
+            for element in range(0,n_average_fc):
                 fc_heuristic[str(line + element) + '[' + str(column) + ']'] = average
 
     '''print("############## fC #################")
@@ -829,15 +829,15 @@ def transform_coefficients(n_average, write_file):
         print("%s : %s" % (key, fc_heuristic[key]))'''
         
     for column in range(0,4):
-        for line in range(0,32,n_average):
+        for line in range(0,32,n_average_fg):
             average = 0
-            for element in range(0,n_average):
+            for element in range(0,n_average_fg):
                 coefficient = str(line + element) + '[' + str(column) + ']'
                 average += get_coefficient_value("fg", coefficient)
                 
-            average = int(average/n_average)
+            average = int(average/n_average_fg)
             
-            for element in range(0,n_average):
+            for element in range(0,n_average_fg):
                 fg_heuristic[str(line + element) + '[' + str(column) + ']'] = average
     
     '''print("############## fG #################")
@@ -845,12 +845,36 @@ def transform_coefficients(n_average, write_file):
         print("%s : %s" % (key, fg_heuristic[key]))'''
         
     if(write_file):
+        print("#####################fC################")
+        for line in range(0,32):
+            index_0 = str(line) + "[" +  str(0) + "]"
+            index_1 = str(line) + "[" +  str(1) + "]"
+            index_2 = str(line) + "[" +  str(2) + "]"
+            index_3 = str(line) + "[" +  str(3) + "]"
+            print(index_0, fc_heuristic[index_0], get_coefficient_value("fc",index_0),index_1, fc_heuristic[index_1], get_coefficient_value("fc",index_1),index_2, fc_heuristic[index_2], get_coefficient_value("fc",index_2),index_3, fc_heuristic[index_3], get_coefficient_value("fc",index_3))
+
+        print(set(fc_coefficients.values()), len(set(fc_coefficients.values())))
+        print(set(fc_heuristic.values()), len(set(fc_heuristic.values())))
+        print("#####################fG################")
         for line in range(0,32):
             index_0 = str(line) + "[" +  str(0) + "]"
             index_1 = str(line) + "[" +  str(1) + "]"
             index_2 = str(line) + "[" +  str(2) + "]"
             index_3 = str(line) + "[" +  str(3) + "]"
             print(index_0, fg_heuristic[index_0], get_coefficient_value("fg",index_0),index_1, fg_heuristic[index_1], get_coefficient_value("fg",index_1),index_2, fg_heuristic[index_2], get_coefficient_value("fg",index_2),index_3, fg_heuristic[index_3], get_coefficient_value("fg",index_3))
+        
+        print(set(fg_coefficients.values()), len(set(fg_coefficients.values())))
+        print(set(fg_heuristic.values()), len(set(fg_heuristic.values())))
 
-            
+
+        print("################(fC + fG) Set################")
+        print(set(fg_heuristic.values()).union(set(fc_heuristic.values())), len(set(fg_heuristic.values()).union(set(fc_heuristic.values()))))
+
+
+        
+
+
+
+
+
 

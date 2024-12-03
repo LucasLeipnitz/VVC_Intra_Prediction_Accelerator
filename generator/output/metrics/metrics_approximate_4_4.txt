@@ -4,14 +4,14 @@
 Number of Blocks: 8
 Number of Replicas: 1
 Number of References: 77
-Number of Coef Counter: 368
-Mean of coefficients per references: 4.78
+Number of Coef Counter: 296
+Mean of coefficients per references: 3.84
 
 Number of modes with 8 block(s): 1
 Mean of Number of Blocks: 8.0
 Mean of Number of Replicas: 1.0
 Mean of Number of References: 77.0
-Mean of Number of Coef Counter: 368.0
-Mean of coefficients per references: 4.78
-Max coefficients in a mode: 368
-Max coefficients in a reference: 10
+Mean of Number of Coef Counter: 296.0
+Mean of coefficients per references: 3.84
+Max coefficients in a mode: 296
+Max coefficients in a reference: 8
