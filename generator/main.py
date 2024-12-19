@@ -18,7 +18,7 @@ def main(modes, current_mode, length = 4, height = 4, control = -1):
     
     angles = sim.map_modes_to_angles(modes)
 
-    sim.transform_coefficients(8, 16, True)
+    sim.transform_coefficients(4, 8,False, True)
 
     if(control == 0):
         sim.calculate_equations(modes, angles, block_size, "fc")

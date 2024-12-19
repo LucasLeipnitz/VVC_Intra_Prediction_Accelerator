@@ -811,7 +811,7 @@ def calculate_equations_planar(nTbW, nTbH):
         excel_writer._save()
         return equations_predV
 
-def transform_coefficients(n_average_fc, n_average_fg, write_file):
+def transform_coefficients(n_average_fc, n_average_fg, print_values, write_file):
     for column in range(0,4):
         for line in range(0,32,n_average_fc):
             average = 0
@@ -844,7 +844,7 @@ def transform_coefficients(n_average_fc, n_average_fg, write_file):
     for key in fg_heuristic:
         print("%s : %s" % (key, fg_heuristic[key]))'''
         
-    if(write_file):
+    if(print_values):
         print("#####################fC################")
         for line in range(0,32):
             index_0 = str(line) + "[" +  str(0) + "]"
@@ -870,6 +870,27 @@ def transform_coefficients(n_average_fc, n_average_fg, write_file):
         print("################(fC + fG) Set################")
         print(set(fg_heuristic.values()).union(set(fc_heuristic.values())), len(set(fg_heuristic.values()).union(set(fc_heuristic.values()))))
 
+    if(write_file):
+        print("#####################fC################")
+        i = 0
+        for line in range(0,32):
+            i += 1
+            index_0 = str(line) + "[" +  str(0) + "]"
+            index_1 = str(line) + "[" +  str(1) + "]"
+            index_2 = str(line) + "[" +  str(2) + "]"
+            index_3 = str(line) + "[" +  str(3) + "]"
+            print("{", fc_heuristic[index_0], ", ", fc_heuristic[index_1], ", ", fc_heuristic[index_2], ", ", fc_heuristic[index_3], "},")
+
+        print("#####################fG################")
+        i = 0
+        for line in range(0,32):
+            i += 1
+            index_0 = str(line) + "[" +  str(0) + "]"
+            index_1 = str(line) + "[" +  str(1) + "]"
+            index_2 = str(line) + "[" +  str(2) + "]"
+            index_3 = str(line) + "[" +  str(3) + "]"
+            print("{", fg_heuristic[index_0], ", ", fg_heuristic[index_1], ", ", fg_heuristic[index_2], ", ", fg_heuristic[index_3], "},")
+        
 
         
 
